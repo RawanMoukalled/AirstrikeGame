@@ -86,7 +86,7 @@ uint16_t x, y, x00, y00; //joystick location
 
 // Define variables and constants
 
-#include "Energia_logo_100_132.h"
+//#include "Energia_logo_100_132.h"
 
 //void logo50()
 //{
@@ -190,6 +190,7 @@ void loop() {
     //chrono = millis();
     //logo50();
     //Serial.println(millis() - chrono, DEC);
+
 
 
 

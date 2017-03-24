@@ -1,0 +1,3 @@
+. myScreen.setPenSolid(false); //creates a square empty on the inside
+. myScreen.setPenSolid(true); //creates a square filled with a colour on the inside
+. PUSH2 = SW2

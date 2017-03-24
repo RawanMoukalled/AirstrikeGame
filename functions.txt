@@ -1,0 +1,31 @@
+**** Draw Obstacle ****
+
+ //Draw background (pixels)
+    myScreen.setPenSolid(true);
+    myScreen.dRectangle(0, 0, 128, 1, blackColour);
+    for(int ix = 0; ix <= 15; ix++) {
+      for(int iy = 0; iy <= 15; iy++) {
+        myScreen.dRectangle(ix*8, iy*8+1, 8, 8, pixels[ix][iy]);
+      }
+    }
+
+
+********************************************************
+
+
+
+
+
+**** Initialize Screen *********************************
+
+void Initialize_Screen(){
+    myScreen.clear(cyanColour);
+    myScreen.setFontSolid(true);
+    myScreen.setFontSize(1);
+    myScreen.gText(1, 50, "AirStrike Game");
+}
+
+**********************************************
+
+
+

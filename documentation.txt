@@ -1,3 +1,6 @@
 . myScreen.setPenSolid(false); //creates a square empty on the inside
 . myScreen.setPenSolid(true); //creates a square filled with a colour on the inside
 . PUSH2 = SW2
+
+. Serial.println("message"); //prints message on PUTTY (useful for debugging)
+. analogread of the joystick positions gives x and y between 0 and 4096

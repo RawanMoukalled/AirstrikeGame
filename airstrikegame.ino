@@ -1,43 +1,21 @@
 ///
-/// @mainpage  LCD_screen_Logos
+/// @mainpage  Airstrike Game
 ///
-/// @details  Energia logo for Educational BoosterPack 2
+/// @details  EECE 425 Project 
 /// @n
 /// @n
-/// @n @a       Developed with [embedXcode](http://embedXcode.weebly.com)
+/// @n @a       
 ///
-/// @author Rei VILO
-/// @author http://embeddedcomputing.weebly.com
+/// @author Anthony Gebrayel
+/// @author Jean Abou Rahal
+/// @author Rawan Moukalled
 ///
-/// @date Dec 14, 2103
-/// @version  104
+/// @date April 25, 2017
+/// @version  1
 ///
-/// @copyright  (c) Rei VILO, 2013
-/// @copyright  CC = BY SA NC
 ///
-/// @see  ReadMe.txt for references
+/// @see  README.txt for references
 ///
-
-
-///
-/// @file LCD_screen_Logos.ino
-/// @brief  Main sketch
-///
-/// @details  Energia logo for Educational BoosterPack 2
-/// @n @a Developed with [embedXcode](http://embedXcode.weebly.com)
-///
-/// @author Rei VILO
-/// @author http://embeddedcomputing.weebly.com
-/// @date 26/07/13 20:26
-/// @version  <#version#>
-///
-/// @copyright  (c) Rei VILO, 2013
-/// @copyright  CC = BY SA NC
-///
-/// @see  ReadMe.txt for references
-/// @n
-///
-
 
 // Core library for code-sense
 #if defined(ENERGIA) // LaunchPad MSP430, Stellaris and Tiva, Experimeter Board FR5739 specific
@@ -56,7 +34,7 @@
 #include <Terminal12e.h>
 #include <Terminal6e.h>
 #include <Terminal8e.h>
-Screen_HX8353E myScreen;
+Screen_HX8353E screen;
 
 
 #define ROWS 80 // max 80
@@ -83,113 +61,60 @@ uint8_t rowSize, colSize;
 uint8_t i, j;
 uint16_t x, y, x00, y00; //joystick location
 
-
-// Define variables and constants
-
-//#include "Energia_logo_100_132.h"
-
-//void logo50()
-//{
-//    uint32_t p;
-//    uint16_t c;
-//    uint16_t x00 = 0;
-//    uint16_t y00 = 0;
-//    uint16_t i00 = 0;
-//    uint16_t j00 = 0;
-//    
-//    if ((myScreen.screenSizeX() > x_Energia_logo_100_132_bmp)) {
-//        x00 = (myScreen.screenSizeX() - x_Energia_logo_100_132_bmp) / 2;
-//    } else {
-//        i00 = (x_Energia_logo_100_132_bmp - myScreen.screenSizeX()) / 2;
-//    }
-//    if ((myScreen.screenSizeY() > y_Energia_logo_100_132_bmp)) {
-//        y00 = (myScreen.screenSizeY() - y_Energia_logo_100_132_bmp) / 2;
-//    } else {
-//        j00 = (y_Energia_logo_100_132_bmp - myScreen.screenSizeY()) / 2;
-//    }
-//    p = (uint32_t)x_Energia_logo_100_132_bmp * y_Energia_logo_100_132_bmp;
-//    
-//    for (uint16_t i=0; i<x_Energia_logo_100_132_bmp; i++) {
-//        for (uint16_t j=0; j<y_Energia_logo_100_132_bmp; j++) {
-//            if ((x00+i < myScreen.screenSizeX()) && (y00+j < myScreen.screenSizeY())) {
-//                c = pic_Energia_logo_100_132_bmp[i*y_Energia_logo_100_132_bmp + j];
-//                myScreen.point(x00+i-i00, y00+j-j00, c);
-//            }
-//        }
-//    }
-//}
-
+enum mode_t {
+  SELECTGAME, GAME, PAUSE, LOADGAME
+  }, 
+  mode = SELECTGAME;
 
 void Initialize_Screen(){
-    myScreen.clear(cyanColour);
-    myScreen.setFontSolid(true);
-    myScreen.setFontSize(1);
-    myScreen.gText(13, 50, "AirStrike Game");
+    screen.clear(cyanColour);
+    screen.setFontSolid(true);
+    screen.setFontSize(1);
+    screen.gText(13, 50, "AirStrike Game");
 }
 
 void Select_Game_Option(){
-  myScreen.clear(blackColour);
-  myScreen.setFontSolid(false);
-  myScreen.setFontSize(1);
-  myScreen.gText(3, 50, ">");
-  myScreen.gText(15, 50, "New Game");
-  myScreen.gText(15, 70, "Load Game");
+  screen.clear(blackColour);
+  screen.setFontSolid(false);
+  screen.setFontSize(1);
+  screen.gText(3, 50, ">");
+  screen.gText(15, 50, "New Game");
+  screen.gText(15, 70, "Load Game");
+}
 
-//  while(1){
-//    x = map(analogRead(joystickX), 0, 4096, 0, 128);
-//    y = map(analogRead(joystickY), 0, 4096, 128, 0);
-//    if (x < 1)      x = 1;
-//    if (x > 126)    x = 126;
-//    if (y < 1)      y = 1;
-//    if (y > 126)    y = 126;
-//    if ((x00 != x) || (y00 != y)) {
-//       
-//        myScreen.dRectangle(x00-1, y00-1, 3, 3, whiteColour);
-//        myScreen.dRectangle(x-1, y-1, 3, 3, whiteColour);
-//        x00 = x;
-//        y00 = y;
-//    }
-//
-//    myScreen.gText(0, myScreen.screenSizeY()-myScreen.fontSizeY(),
-//                   "x=" + i32toa((int16_t)x-64, 10, 1, 6) +" y=" + i32toa(64-(int16_t)y, 10, 1, 6),
-//                   whiteColour);
-//  }
-  }
+void Arrow_Move(){
+  x = analogRead(joystickX);
+  y = analogRead(joystickY);
   
-
-
+}
 
 // Add setup code
 void setup() {
-    Serial.begin(9600);
+    Serial.begin(9600); //UART with its baudrate
     delay(100);
-    Serial.println("WITH_LOGO example for LCD_screen");
     
-    myScreen.begin();
-    String s = myScreen.WhoAmI();
-    myScreen.setOrientation(0);
-    x00 = 0;
-    y00 = 0;
-}
-
-// Add loop code
-void loop() {
+    screen.begin();
+    screen.setOrientation(0);
+    joystickX00 = 0;
+    joystickY00 = 0;
 
     Initialize_Screen();  //Print first the message: "Airstrike Game"
     delay(2000);
     
-    myScreen.clear();   //Go to the next page
+    screen.clear();   //Go to the next page
     
     Select_Game_Option();   //User can choose between a new game or to load a saved game
 
-
-    while(1)
-    {
-    }
 }
-    //chrono = millis();
-    //logo50();
-    //Serial.println(millis() - chrono, DEC);
+
+// Add loop code
+void loop() {
+    if(mode == SELECTGAME){
+      Arrow_Move();
+    }
+    
+}
+
 
 
 

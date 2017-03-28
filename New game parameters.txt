@@ -1,0 +1,7 @@
+difficulty 
+airplane position 
+number of targets + positions (vector)
+number of obstacles + positions (vector)
+life 
+time remaining
+

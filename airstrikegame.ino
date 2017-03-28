@@ -36,6 +36,9 @@
 #include <Terminal8e.h>
 Screen_HX8353E screen;
 
+#include <vector>
+
+
 #define ROWS 80 // max 80
 #define COLS 60 // max 60
 
@@ -46,13 +49,26 @@ Screen_HX8353E screen;
 #define joystickY 26 //pin for the joystick Y coordinates
 #define Enter 32 //pin for the Push button
 
+
+//function prototypes
+void Initialize_Screen();
+void Display_Select_Type();
+void Place_Arrow(uint16_t x, uint16_t y);
+void Read_Joystick();
+void Display_Select_Difficulty();
+void Display_New_Page(uint16_t y);
+void Read_Enter();
+void Display_Gameplay();
+
+
 // Define variables and constants
 uint16_t jsX, jsY, arrowX, arrowY; //current positions of the joystick and arrow 
 
 // Which mode of the game we are at
 enum screen_mode_t {
-  SELECTGAMETYPE, GAME, PAUSE, LOADGAME
-} mode = SELECTGAMETYPE; // main mode to be used 
+  SELECTTYPE, GAME, PAUSE, LOADGAME,
+  SELECTDIFFICULTY
+} mode = SELECTTYPE; // main mode to be used 
 
 // Display Airstrike Game 
 void Initialize_Screen(){
@@ -63,7 +79,7 @@ void Initialize_Screen(){
 }
 
 //Select between a new game or loading one 
-void Select_Game_Type(){
+void Display_Select_Type(){
   screen.clear(blackColour);
   screen.setFontSolid(false);
   screen.setFontSize(1);
@@ -74,46 +90,12 @@ void Select_Game_Type(){
   screen.gText(15, 70, "Load Game");
 }
 
-//checks the joystick movements
-void Read_Joystick() {
-  //convert from input to output range, Y goes from 0 to 128 top to bottom of the screen
-  jsX = map(analogRead(joystickX), 0, 4096, 0, 128);
-  jsY = map(analogRead(joystickY), 0, 4096, 128, 0);
-  //joystick was moved down
-  if( jsY > 90) {
-    Place_Arrow(arrowX, arrowY + 20);
-  } else if (jsY < 30) { //joystick up
-    Place_Arrow(arrowX, arrowY - 20);
-  }
-}
-
-// check for the push button being pressed
-void Read_Enter() {
-  int enterState = digitalRead(Enter);
-  //button has been pushed
-  if(enterState == LOW) {
-    if(mode == SELECTGAMETYPE){
-      Display_New_Page(arrowY);
-    }
-  }
-}
-
-void Display_New_Page(uint16_t y) {
-  if(mode == SELECTGAMETYPE){
-    if(y == 50){
-      //Display_New_Game();
-    }else if(y == 70) {
-      //Display_Load_Game();
-    }
-  }
-}
-
 void Place_Arrow(uint16_t x, uint16_t y){
     uint16_t minY, maxY;
-    if(mode == SELECTGAMETYPE) {
+    if(mode == SELECTTYPE || mode == SELECTDIFFICULTY) {
       minY = 50; 
       maxY = 70;
-    }
+    } 
 
     //erase current arrow by placing a full black box on it
     screen.setPenSolid(true);
@@ -132,6 +114,98 @@ void Place_Arrow(uint16_t x, uint16_t y){
     screen.gText(arrowX, arrowY, ">");
 }
 
+//checks the joystick movements
+void Read_Joystick() {
+  
+  //convert from input to output range, Y goes from 0 to 128 top to bottom of the screen
+  jsX = map(analogRead(joystickX), 0, 4096, 0, 128);
+  jsY = map(analogRead(joystickY), 0, 4096, 128, 0);
+  
+  //joystick was moved down
+  if( jsY > 90) {
+    Place_Arrow(arrowX, arrowY + 20);
+  } else if (jsY < 30) { 
+    Place_Arrow(arrowX, arrowY - 20);
+  }
+
+}
+
+void Display_Select_Difficulty() {
+  screen.clear(blackColour);
+  screen.setFontSolid(false);
+  screen.setFontSize(1);
+  screen.gText(40, 10, "Select");
+  screen.gText(25, 30, "Difficulty");
+  arrowX = 3;
+  arrowY = 50;
+  screen.gText(arrowX, arrowY, ">");
+  screen.gText(15, 50, "Easy");
+  screen.gText(15, 70, "Hard");
+}
+
+//Displays new page according to the position of the arrow 
+//which means, which menu item position was selected
+void Display_New_Page(uint16_t y) {
+  
+  if(mode == SELECTTYPE){
+    if(y == 50){
+      mode = SELECTDIFFICULTY;
+      Display_Select_Difficulty();
+    }else if(y == 70) {
+      //Display_Load_Game();
+    }
+  } 
+  
+  else if(mode == SELECTDIFFICULTY) {
+    if(y == 50){
+      //easy
+      Serial.println("easy");
+    } 
+    else if(y == 70) {
+       //hard
+       Serial.println("hard");
+    }
+    mode = GAME; 
+    Display_Gameplay();
+    
+  } 
+}
+
+// check for the push button being pressed
+void Read_Enter() {
+  int enterState = digitalRead(Enter);
+  
+  //button has been pushed
+  if(enterState == LOW) {
+    if(mode == SELECTTYPE || mode == SELECTDIFFICULTY){
+      Display_New_Page(arrowY);
+    } 
+  }
+
+}
+
+
+
+
+//difficulty 
+//airplane position 
+//number of targets + positions (vector)
+//number of obstacles + positions (vector)
+//life 
+//time remaining
+void Display_Gameplay(/*int difficulty, int plane_position, std::vector<int> targets, 
+    std::vector<int> obstacles, int life, int remaining_time*/) {
+      
+  screen.clear(blackColour);
+  screen.setFontSolid(false);
+  screen.setFontSize(1);
+  screen.triangle(40, 128, 60, 128, 50, 100, whiteColour);
+
+}
+
+
+
+
 // Add setup code
 void setup() {
   Serial.begin(9600); //UART with its baudrate
@@ -146,15 +220,15 @@ void setup() {
     
   screen.clear();   //Go to the next page
     
-  Select_Game_Type();   //User can choose between a new game or to load a saved game  
+  Display_Select_Type();   //User can choose between a new game or to load a saved game  
 }
 
 // Add loop code
 void loop() {
-  if(mode == SELECTGAMETYPE){
+  if(mode == SELECTTYPE || mode == SELECTDIFFICULTY){
     Read_Joystick();
     Read_Enter();
-    delay(280);  
+    delay(200);  
   } 
 }
 

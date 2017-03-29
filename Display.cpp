@@ -1,13 +1,12 @@
-#include "Displays.h"
-#include "Game.h" 
+#include "Display.h"
 
-Displays::Displays() {
-  screen  = &(Displays::screen_main);  
+Display::Display() {
+  screen  = &(Display::screen_main);  
 }
  
 
 // Display Airstrike Game 
-void Displays::Initialize_Screen(){
+void Display::Initialize_Screen(){
   screen->clear(cyanColour);
   screen->setFontSolid(true);
   screen->setFontSize(1);
@@ -15,7 +14,7 @@ void Displays::Initialize_Screen(){
 }
 
 //Select between a new game or loading one 
-void Displays::Display_Select_Type(){
+void Display::Display_Select_Type(){
   mode = SELECTTYPE;
   screen->clear(blackColour);
   screen->setFontSolid(false);
@@ -27,7 +26,7 @@ void Displays::Display_Select_Type(){
   screen->gText(15, 70, "Load Game");
 }
 
-void Displays::Place_Arrow(uint16_t x, uint16_t y){
+void Display::Place_Arrow(uint16_t x, uint16_t y){
     uint16_t minY, maxY;
     if(mode == SELECTTYPE) {
       minY = 50; 
@@ -57,7 +56,7 @@ void Displays::Place_Arrow(uint16_t x, uint16_t y){
 }
 
 //checks the joystick movements
-void Displays::Read_Joystick() {
+void Display::Read_Joystick() {
   
   //convert from input to output range, Y goes from 0 to 128 top to bottom of the screen
   jsX = map(analogRead(joystickX), 0, 4096, 0, 128);
@@ -72,7 +71,7 @@ void Displays::Read_Joystick() {
 
 }
 
-void Displays::Display_Select_Difficulty() {
+void Display::Display_Select_Difficulty() {
   mode = SELECTDIFFICULTY;
   screen->clear(blackColour);
   screen->setFontSolid(false);
@@ -89,7 +88,7 @@ void Displays::Display_Select_Difficulty() {
 
 //Displays new page according to the position of the arrow 
 //which means, which menu item position was selected
-void Displays::Display_New_Page(uint16_t y) {
+void Display::Display_New_Page(uint16_t y) {
   
   if(mode == SELECTTYPE){
     if(y == 50){
@@ -103,18 +102,13 @@ void Displays::Display_New_Page(uint16_t y) {
   else if(mode == SELECTDIFFICULTY) {
     //easy mode
     if(y == 50){
-      //easy
-      //mode = GAME; 
-      //Display_Gameplay();
-      Game * game = new Game(screen);
-      //game->Display_Game();
+      game = new Game(screen);
+      mode = GAME;
+      game->Display_Game();
       Serial.println("easy");
     } 
     //hard mode
     else if(y == 70) {
-       //hard
-       //mode = GAME; 
-       //Display_Gameplay();
        Serial.println("hard");
     }
     //back to select type
@@ -125,7 +119,7 @@ void Displays::Display_New_Page(uint16_t y) {
 }
 
 // check for the push button being pressed
-void Displays::Read_Enter() {
+void Display::Read_Enter() {
   int enterState = digitalRead(Enter);
   
   //button has been pushed

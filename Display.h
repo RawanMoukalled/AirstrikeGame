@@ -1,5 +1,5 @@
-#ifndef displays_h
-#define displays_h
+#ifndef display_h
+#define display_h
 
 
 #if defined(ENERGIA) // LaunchPad MSP430, Stellaris and Tiva, Experimeter Board FR5739 specific
@@ -18,6 +18,8 @@
 #include <Terminal6e.h>
 #include <Terminal8e.h>
 
+#include "Game.h"
+
 #define joystickX 2 //pin for the joystick X coordinates
 #define joystickY 26 //pin for the joystick Y coordinates
 #define Enter 32 //pin for the Push button
@@ -32,9 +34,9 @@ enum screen_mode_t {
 }; // main mode to be used 
 
 
-class Displays {
+class Display {
   public:
-    Displays();
+    Display();
     void Initialize_Screen();
     void Display_Select_Type();
     void Place_Arrow(uint16_t x, uint16_t y);
@@ -49,6 +51,9 @@ class Displays {
 
     Screen_HX8353E screen_main; 
     Screen_HX8353E *screen;//pointer to the screen
+
+    Game * game;
+
 };
 
 #endif

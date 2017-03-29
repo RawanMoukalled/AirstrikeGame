@@ -17,11 +17,19 @@
 #include <Terminal6e.h>
 #include <Terminal8e.h>
 
+#include "Airplane.h"
+
 class Game {
   public:
     Game(Screen_HX8353E *screen);
-    Screen_HX8353E *screen;
     void Display_Game();
+    void Clear_Objects();
+    void Increment_Object_Positions();
+    void Place_Objects();
+
+    Screen_HX8353E *screen;
+    Airplane * plane;
+    
   private:
     
 };

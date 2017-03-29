@@ -27,20 +27,10 @@
 // Following includes for Energia only
 #include <SPI.h>
 
-#include <LCD_screen.h>
-#include <LCD_screen_font.h>
-#include <LCD_utilities.h>
-#include <Screen_HX8353E.h>
-#include <Terminal12e.h>
-#include <Terminal6e.h>
-#include <Terminal8e.h>
-
-#include <vector>
-#include "Displays.h"
+#include "Display.h"
 #include "Game.h"
 
-Displays * display;
-
+Display * display;
 
 // Add setup code
 void setup() {
@@ -48,7 +38,7 @@ void setup() {
   delay(100);
   pinMode(Enter, INPUT_PULLUP);
   
-  display = new Displays();
+  display = new Display();
     
   display->screen->begin();
   display->screen->setOrientation(0);
@@ -67,7 +57,11 @@ void loop() {
     display->Read_Joystick();
     display->Read_Enter();
     delay(200);  
-  } 
+  }
+
+  else if(display->mode == GAME) {
+    display->game->plane->Read_Movement();
+  }
 }
 
 

@@ -1,13 +1,32 @@
 #include "Game.h"
 
+
 Game::Game(Screen_HX8353E *screen){  
   this->screen = screen;
+  plane = new Airplane();
 }
 
 void Game::Display_Game() {
   screen->clear(blackColour);
   screen->setFontSolid(false);
   screen->setFontSize(1);
-  screen->triangle(40, 128, 60, 128, 50, 100, whiteColour);
+  screen->setPenSolid(true);
+  screen->triangle(plane->x1, plane->y1, plane->x2, plane->y2, plane->x3, plane->y3 , whiteColour);
+ 
+}
+
+void Game::Clear_Objects() {
+  screen->setPenSolid(true);
+
+  //clear plane
+  screen->triangle(plane->x1, plane->y1, plane->x2, plane->y2, plane->x3, plane->y3 , blackColour);
+}
+
+void Game::Increment_Object_Positions() {
+  plane->Move();    
+}
+
+void Game::Place_Objects() {
+  
 }
 

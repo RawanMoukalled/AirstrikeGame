@@ -1,3 +1,6 @@
+#ifndef game_h
+#define game_h
+
 #if defined(ENERGIA) // LaunchPad MSP430, Stellaris and Tiva, Experimeter Board FR5739 specific
 #include "Energia.h"
 #else // error
@@ -23,3 +26,4 @@ class Game {
     
 };
 
+#endif

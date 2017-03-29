@@ -34,9 +34,14 @@
 #include <Terminal12e.h>
 #include <Terminal6e.h>
 #include <Terminal8e.h>
-Screen_HX8353E screen;
 
 #include <vector>
+#include "Game.h"
+
+Screen_HX8353E screen_main; 
+Screen_HX8353E *screen = &screen_main; //pointer to the screen  
+
+
 
 
 #define ROWS 80 // max 80
@@ -58,8 +63,6 @@ void Read_Joystick();
 void Display_Select_Difficulty();
 void Display_New_Page(uint16_t y);
 void Read_Enter();
-void Display_Gameplay();
-
 
 // Define variables and constants
 uint16_t jsX, jsY, arrowX, arrowY; //current positions of the joystick and arrow 
@@ -72,34 +75,40 @@ enum screen_mode_t {
 
 // Display Airstrike Game 
 void Initialize_Screen(){
-  screen.clear(cyanColour);
-  screen.setFontSolid(true);
-  screen.setFontSize(1);
-  screen.gText(13, 50, "AirStrike Game");
+  screen->clear(cyanColour);
+  screen->setFontSolid(true);
+  screen->setFontSize(1);
+  screen->gText(13, 50, "AirStrike Game");
 }
 
 //Select between a new game or loading one 
 void Display_Select_Type(){
-  screen.clear(blackColour);
-  screen.setFontSolid(false);
-  screen.setFontSize(1);
+  mode = SELECTTYPE;
+  screen->clear(blackColour);
+  screen->setFontSolid(false);
+  screen->setFontSize(1);
   arrowX = 3;
   arrowY = 50;
-  screen.gText(arrowX, arrowY, ">");
-  screen.gText(15, 50, "New Game");
-  screen.gText(15, 70, "Load Game");
+  screen->gText(arrowX, arrowY, ">");
+  screen->gText(15, 50, "New Game");
+  screen->gText(15, 70, "Load Game");
 }
 
 void Place_Arrow(uint16_t x, uint16_t y){
     uint16_t minY, maxY;
-    if(mode == SELECTTYPE || mode == SELECTDIFFICULTY) {
+    if(mode == SELECTTYPE) {
       minY = 50; 
       maxY = 70;
     } 
 
+    else if (mode == SELECTDIFFICULTY) {
+      minY = 50;
+      maxY = 90;
+    }
+
     //erase current arrow by placing a full black box on it
-    screen.setPenSolid(true);
-    screen.dRectangle(arrowX, arrowY, 9, 10, blackColour);
+    screen->setPenSolid(true);
+    screen->dRectangle(arrowX, arrowY, 9, 10, blackColour);
 
     //loop to bottom or top if the next y position exceeds the 
     //current menu items position range
@@ -111,7 +120,7 @@ void Place_Arrow(uint16_t x, uint16_t y){
       arrowX = x;
       arrowY = y;  
     }
-    screen.gText(arrowX, arrowY, ">");
+    screen->gText(arrowX, arrowY, ">");
 }
 
 //checks the joystick movements
@@ -131,16 +140,18 @@ void Read_Joystick() {
 }
 
 void Display_Select_Difficulty() {
-  screen.clear(blackColour);
-  screen.setFontSolid(false);
-  screen.setFontSize(1);
-  screen.gText(40, 10, "Select");
-  screen.gText(25, 30, "Difficulty");
+  mode = SELECTDIFFICULTY;
+  screen->clear(blackColour);
+  screen->setFontSolid(false);
+  screen->setFontSize(1);
+  screen->gText(40, 10, "Select");
+  screen->gText(25, 30, "Difficulty");
   arrowX = 3;
   arrowY = 50;
-  screen.gText(arrowX, arrowY, ">");
-  screen.gText(15, 50, "Easy");
-  screen.gText(15, 70, "Hard");
+  screen->gText(arrowX, arrowY, ">");
+  screen->gText(15, 50, "Easy");
+  screen->gText(15, 70, "Hard");
+  screen->gText(15, 90, "Back");
 }
 
 //Displays new page according to the position of the arrow 
@@ -149,7 +160,7 @@ void Display_New_Page(uint16_t y) {
   
   if(mode == SELECTTYPE){
     if(y == 50){
-      mode = SELECTDIFFICULTY;
+      
       Display_Select_Difficulty();
     }else if(y == 70) {
       //Display_Load_Game();
@@ -157,17 +168,26 @@ void Display_New_Page(uint16_t y) {
   } 
   
   else if(mode == SELECTDIFFICULTY) {
+    //easy mode
     if(y == 50){
       //easy
+      mode = GAME; 
+      //Display_Gameplay();
+      Game * game = new Game(screen);
+      game->Display_Game();
       Serial.println("easy");
     } 
+    //hard mode
     else if(y == 70) {
        //hard
+       mode = GAME; 
+       //Display_Gameplay();
        Serial.println("hard");
     }
-    mode = GAME; 
-    Display_Gameplay();
-    
+    //back to select type
+    else if(y == 90) {
+      Display_Select_Type();
+    }
   } 
 }
 
@@ -184,41 +204,19 @@ void Read_Enter() {
 
 }
 
-
-
-
-//difficulty 
-//airplane position 
-//number of targets + positions (vector)
-//number of obstacles + positions (vector)
-//life 
-//time remaining
-void Display_Gameplay(/*int difficulty, int plane_position, std::vector<int> targets, 
-    std::vector<int> obstacles, int life, int remaining_time*/) {
-      
-  screen.clear(blackColour);
-  screen.setFontSolid(false);
-  screen.setFontSize(1);
-  screen.triangle(40, 128, 60, 128, 50, 100, whiteColour);
-
-}
-
-
-
-
 // Add setup code
 void setup() {
   Serial.begin(9600); //UART with its baudrate
   delay(100);
   pinMode(Enter, INPUT_PULLUP);
     
-  screen.begin();
-  screen.setOrientation(0);
+  screen->begin();
+  screen->setOrientation(0);
     
   Initialize_Screen();  //Print first the message: "Airstrike Game"
   delay(2000);
     
-  screen.clear();   //Go to the next page
+  screen->clear();   //Go to the next page
     
   Display_Select_Type();   //User can choose between a new game or to load a saved game  
 }

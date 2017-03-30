@@ -53,14 +53,17 @@ void setup() {
 
 // Add loop code
 void loop() {
-  if(display->mode == SELECTTYPE || display->mode == SELECTDIFFICULTY){
+  if(display->mode == SELECTTYPE || display->mode == SELECTDIFFICULTY || display->mode == PAUSE){
     display->Read_Joystick();
     display->Read_Enter();
     delay(200);  
   }
 
   else if(display->mode == GAME) {
-    display->game->plane->Read_Movement();
+    //display->game->Clear_Objects();
+    //display->game->Increment_Object_Positions();
+    //display->game->Place_Objects();
+    display->Read_Enter();
   }
 }
 

@@ -22,6 +22,7 @@
 class Game {
   public:
     Game(Screen_HX8353E *screen);
+    void Initialize_Objects();
     void Display_Game();
     void Clear_Objects();
     void Increment_Object_Positions();

@@ -44,6 +44,7 @@ class Display {
     void Display_Select_Difficulty();
     void Display_New_Page(uint16_t y);
     void Read_Enter();
+    void Display_Paused_Game();
 
     screen_mode_t mode;
 

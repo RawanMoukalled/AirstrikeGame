@@ -22,6 +22,7 @@ void Display::Display_Select_Type(){
   arrowX = 3;
   arrowY = 50;
   screen->gText(arrowX, arrowY, ">");
+  screen->gText(25, 10, "Airstrike!");
   screen->gText(15, 50, "New Game");
   screen->gText(15, 70, "Load Game");
 }
@@ -33,7 +34,7 @@ void Display::Place_Arrow(uint16_t x, uint16_t y){
       maxY = 70;
     } 
 
-    else if (mode == SELECTDIFFICULTY) {
+    else if (mode == SELECTDIFFICULTY || mode == PAUSE) {
       minY = 50;
       maxY = 90;
     }
@@ -86,6 +87,20 @@ void Display::Display_Select_Difficulty() {
   screen->gText(15, 90, "Back");
 }
 
+void Display::Display_Paused_Game() {
+  mode = PAUSE;
+  screen->clear(blackColour);
+  screen->setFontSolid(false);
+  screen->setFontSize(1);
+  screen->gText(40, 10, "Pause");
+  arrowX = 3;
+  arrowY = 50;
+  screen->gText(arrowX, arrowY, ">");
+  screen->gText(15, 50, "Exit");
+  screen->gText(15, 70, "Save and Exit");
+  screen->gText(15, 90, "Back");
+}
+
 //Displays new page according to the position of the arrow 
 //which means, which menu item position was selected
 void Display::Display_New_Page(uint16_t y) {
@@ -115,7 +130,36 @@ void Display::Display_New_Page(uint16_t y) {
     else if(y == 90) {
       Display_Select_Type();
     }
-  } 
+  }
+
+  else if(mode == PAUSE) {
+
+    //exit
+    if(y == 50) {
+      //restore game objects to initial state in case of
+      //future new game 
+      game->Initialize_Objects();
+      Display_Select_Type();
+    }
+
+    //save and exit
+    else if(y == 70) {
+      //restore game objects to initial state in case of
+      //future new game 
+      game->Initialize_Objects();
+      Display_Select_Type();
+    }
+
+    //back to game
+    else if(y == 90) {
+      mode = GAME;
+      game->Display_Game();
+    }
+  }
+
+  else if(mode == GAME) {
+    Display_Paused_Game();
+  }
 }
 
 // check for the push button being pressed
@@ -124,7 +168,7 @@ void Display::Read_Enter() {
   
   //button has been pushed
   if(enterState == LOW) {
-    if(mode == SELECTTYPE || mode == SELECTDIFFICULTY){
+    if(mode == SELECTTYPE || mode == SELECTDIFFICULTY || mode == GAME || mode == PAUSE){
       Display_New_Page(arrowY);
     } 
   }

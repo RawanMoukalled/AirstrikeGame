@@ -17,7 +17,10 @@
 #include <Terminal6e.h>
 #include <Terminal8e.h>
 
+#include <vector>
 #include "Airplane.h"
+#include "Target.h"
+#include "Obstacle.h"
 
 class Game {
   public:
@@ -27,10 +30,12 @@ class Game {
     void Clear_Objects();
     void Increment_Object_Positions();
     void Place_Objects();
+    
 
     Screen_HX8353E *screen;
     Airplane * plane;
-    
+    //Vector<Target*> targets;
+    Target * target;
   private:
     
 };

@@ -60,9 +60,9 @@ void loop() {
   }
 
   else if(display->mode == GAME) {
-    //display->game->Clear_Objects();
-    //display->game->Increment_Object_Positions();
-    //display->game->Place_Objects();
+    display->game->Clear_Objects();
+    display->game->Increment_Object_Positions();
+    display->game->Place_Objects();
     display->Read_Enter();
   }
 }

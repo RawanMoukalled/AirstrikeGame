@@ -127,11 +127,9 @@ void Display::Display_New_Page(uint16_t y) {
       game = new Game(screen);
       mode = GAME;
       game->Display_Game();
-      Serial.println("easy");
     } 
     //hard mode
     else if(y == 70) {
-       Serial.println("hard");
     }
     //back to select type
     else if(y == 90) {
@@ -171,13 +169,13 @@ void Display::Display_New_Page(uint16_t y) {
 
 // check for the push button being pressed
 void Display::Read_Enter() {
-  int enterState = digitalRead(Enter);
-  
-  //button has been pushed
-  if(enterState == LOW) {
-    if(mode == SELECTTYPE || mode == SELECTDIFFICULTY || mode == GAME || mode == PAUSE){
-      Display_New_Page(arrowY);
-    } 
+    int enterState = digitalRead(Enter);
+    
+    //button has been pushed
+    if(enterState == LOW) {
+      if(mode == SELECTTYPE || mode == SELECTDIFFICULTY || mode == GAME || mode == PAUSE){
+        Display_New_Page(arrowY);
+    }
   }
 }
 //void Display::Display_Timer_1sec() {

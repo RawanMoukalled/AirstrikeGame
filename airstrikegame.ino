@@ -38,10 +38,9 @@
 
 #define joystickSEL 5 //pin for the joystick push button
 #define pushButton1 33 //push button for Pause option
-
+#define blueLED 37 //blue LED on joystick board
 
 Display * display;
-volatile int strikeFlag = HIGH;
 volatile int pauseFlag = HIGH;
 volatile uint16_t flag_1sec = 1; 
 volatile uint8_t count_timer_1sec = 100;
@@ -49,10 +48,8 @@ volatile uint8_t count_timer_1sec = 100;
 void strikeInterrupt()
 {
   if(display->mode == GAME){
-    //strikeFlag = HIGH;
     display->game->Create_New_Strike();
   }
-  pauseFlag = LOW;
 }
 
 void Timer1IntHandler(void){
@@ -61,7 +58,7 @@ void Timer1IntHandler(void){
   flag_1sec +=1;
   if (flag_1sec == 1600){
       count_timer_1sec -=1;
-    Serial.println(count_timer_1sec);  
+    //Serial.println(count_timer_1sec);  
   }
 }
 
@@ -75,7 +72,7 @@ void Timer_1sec(uint16_t period0){
   // Frequency is given by MasterClock / CustomValue
   // Examples: 120MHz / 120k = 1000 kHz ; 120MHz / 120M = 1 Hz
   ROM_TimerLoadSet(TIMER1_BASE, TIMER_A, SysCtlClockGet()/period0);
-  Serial.println(SysCtlClockGet()); 
+  //Serial.println(SysCtlClockGet()); 
   TimerIntRegister(TIMER1_BASE, TIMER_A, &Timer1IntHandler);
   //ROM_IntEnable(INT_TIMER1A);  // Enable Timer 0A Interrupt
   //ROM_TimerIntEnable(TIMER1_BASE, TIMER_TIMA_TIMEOUT); // Timer 0A Interrupt when Timeout
@@ -102,6 +99,8 @@ void setup() {
   pinMode(Enter, INPUT_PULLUP);
   pinMode(joystickSEL, INPUT_PULLUP);
   pinMode(pushButton1, INPUT_PULLUP);
+  pinMode(blueLED, OUTPUT);
+  digitalWrite(blueLED, LOW);
      
   display = new Display();
     
@@ -132,14 +131,14 @@ void loop() {
   }
 
   else if(display->mode == GAME) {
-    if (strikeFlag){
-      strikeFlag = LOW;
-    }
     display->game->Clear_Objects();
     display->game->Increment_Object_Positions();
     display->game->Place_Objects();
     display->Read_Enter();    //Change this to become an interrupt -->optimal
   }
+
+    
+    
 }
 
 

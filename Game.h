@@ -38,6 +38,8 @@ class Game {
     void Decrease_Life();
     void Change_Plane_Color(); //When a collision happens between the airplane and a target/obstacle, change the plane's color to red
 
+    double distance(int x1, int y1, int x2, int y2);
+
     
     Screen_HX8353E *screen;
     Airplane * plane;

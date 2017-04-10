@@ -1,4 +1,5 @@
 #include "Game.h"
+#include <cmath>
 
 Game::Game(Screen_HX8353E *screen){  
   this->screen = screen;
@@ -21,7 +22,7 @@ void Game::Clear_Objects() {
   screen->setPenSolid(true);
 
   //clear plane
-  //screen->triangle(plane->x1, plane->y1, plane->x2, plane->y2, plane->x3, plane->y3 , blackColour);
+  screen->triangle(plane->x1, plane->y1, plane->x2, plane->y2, plane->x3, plane->y3 , blackColour);
   screen->circle(target->x, target->y, target->radius, blackColour);
   if (strike->x != 0 and strike->y != 0)
   {
@@ -31,10 +32,9 @@ void Game::Clear_Objects() {
 }
 
 void Game::Increment_Object_Positions() {
-  //plane->Move();    
+  plane->Move();    
   target->Move();
-  Serial.println(target->y);
-  Serial.println(plane->y2);
+
 
   //Move the strike
   if (strike->x != 0 and strike->y != 0)
@@ -56,14 +56,13 @@ void Game::Increment_Object_Positions() {
     }
   }
 
-  if (strike->y - target->y < 10 )
-  {
-    score += 1;
-    screen->circle(target->x, target->y, target->radius, blackColour);
-  }
+//  if ( distance() < (target->radius  )
+//  {
+//    score += 1;
+//    screen->circle(target->x, target->y, target->radius, blackColour);
+//  }
   
-  Serial.println(plane->planeLife);
-  delay(50);
+  //delay(50);
 }
 
 void Game::Place_Objects() {
@@ -73,7 +72,7 @@ void Game::Place_Objects() {
   {
     screen->circle(strike->x, strike->y, strike->radius, yellowColour);
   }
-  delay(200);
+  delay(100);
 }
 
 
@@ -109,3 +108,9 @@ void Game::Change_Plane_Color(){
   delay(200);
   screen->triangle(plane->x1, plane->y1, plane->x2, plane->y2, plane->x3, plane->y3 , whiteColour);
 }   
+
+double Game::distance(int x1, int y1, int x2, int y2) {
+  //return sqrt( (x1-x2)(x1-x2) + (y1-y2)(y1-y2) );
+  return 2.0;
+}
+

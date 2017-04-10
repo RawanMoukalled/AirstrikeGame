@@ -1,4 +1,6 @@
 #include "Display.h"
+#include <string>
+#include <sstream>
 
 Display::Display() {
   screen  = &(Display::screen_main);  
@@ -8,9 +10,9 @@ Display::Display() {
 // Display Airstrike Game 
 void Display::Initialize_Screen(){
   screen->clear(cyanColour);
-  screen->setFontSolid(true);
+  screen->setFontSolid(false);
   screen->setFontSize(1);
-  screen->gText(13, 50, "AirStrike Game");
+  screen->gText(13, 50, "AirStrike Game", blackColour);
 }
 
 //Select between a new game or loading one 
@@ -69,7 +71,12 @@ void Display::Read_Joystick() {
   } else if (jsY < 30) { 
     Place_Arrow(arrowX, arrowY - 20);
   }
+}
 
+//check for joystick push button
+void Display::Read_Joystick_Button(){
+  digitalRead(joystickSEL);
+  delay(50);
 }
 
 void Display::Display_Select_Difficulty() {
@@ -172,5 +179,9 @@ void Display::Read_Enter() {
       Display_New_Page(arrowY);
     } 
   }
-
 }
+
+void Display::Display_Timer_1sec() {
+   screen->gText(10, 10, String(game->count_timer_1sec), whiteColour); 
+}
+

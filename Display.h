@@ -22,6 +22,7 @@
 
 #define joystickX 2 //pin for the joystick X coordinates
 #define joystickY 26 //pin for the joystick Y coordinates
+#define joystickSEL 5 //pin for the joystick push button
 #define Enter 32 //pin for the Push button
 
 // Define variables and constants
@@ -40,16 +41,19 @@ class Display {
     void Initialize_Screen();
     void Display_Select_Type();
     void Place_Arrow(uint16_t x, uint16_t y);
-    void Read_Joystick();
+    void Read_Joystick(); //to move arrow
+    void Read_Joystick_Button(); //to strike
     void Display_Select_Difficulty();
     void Display_New_Page(uint16_t y);
     void Read_Enter();
     void Display_Paused_Game();
-
+    void Display_Timer_1sec();
+    
     screen_mode_t mode;
 
     uint16_t jsX, jsY, arrowX, arrowY; //current positions of the joystick and arrow 
-
+    
+    
     Screen_HX8353E screen_main; 
     Screen_HX8353E *screen;//pointer to the screen
 

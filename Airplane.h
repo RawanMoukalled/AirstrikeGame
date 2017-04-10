@@ -20,10 +20,10 @@ class Airplane {
     void Move();
     void Change_Points(int delta);
     void Initialize_Parameters();
-    
+     
     int x1, y1, x2, y2, x3, y3; // lcd positions for the triangle
     int currX, prevX; //x axis positions for the accelerometer
-    
+    int planeLife, planeLifeX;
 };
 
 #endif

@@ -7,11 +7,13 @@ Airplane::Airplane() {
 void Airplane::Initialize_Parameters() {
   x1 = 48;
   y1 = 128;
-  x2 = 64;
-  y2 = 109;
-  x3 = 80;
+  x2 = 59;
+  y2 = 115;
+  x3 = 70;
   y3 = 128;
   currX = 1400; // initialize x axis position as straight horizontal
+  planeLife = 3;
+  planeLifeX = 115; //location of the life (keep track of the life)
 }
 
 //read accelerometer values and decide whether to move left or right
@@ -31,7 +33,12 @@ void Airplane::Change_Points(int delta) {
   if(newX3 <= 128 && newX1 >= 0) {
     x1=newX1;
     x2+=delta;
-    x3+=newX3;
+    x3=newX3;
   }
 }
+
+////check the airplane Life
+//void Airplane::Plane_Life(){
+//  planeLife -=1;
+//}
 

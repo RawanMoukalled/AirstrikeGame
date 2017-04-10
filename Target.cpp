@@ -5,9 +5,9 @@ Target::Target() {
 }
 
 void Target::Initialize_Parameters() {
-  x = 20;
-  y = 20; 
-  radius = 20; 
+  x = 59;
+  y = 5; 
+  radius = 7; 
 }
 
 void Target::Move() {

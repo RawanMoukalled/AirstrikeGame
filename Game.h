@@ -21,6 +21,7 @@
 #include "Airplane.h"
 #include "Target.h"
 #include "Obstacle.h"
+#include "Strike.h"
 
 class Game {
   public:
@@ -30,12 +31,23 @@ class Game {
     void Clear_Objects();
     void Increment_Object_Positions();
     void Place_Objects();
-    
+    void Create_New_Strike();
 
+    void Initialize_Life();
+    void Start_Timer_1sec();
+    void Decrease_Life();
+    void Change_Plane_Color(); //When a collision happens between the airplane and a target/obstacle, change the plane's color to red
+
+    
     Screen_HX8353E *screen;
     Airplane * plane;
     //Vector<Target*> targets;
     Target * target;
+    //Vector<Obstacle*> obstacles;
+    //Obstacle *obstacle;
+    Strike *strike;
+    
+    int score = 0; //increment in case strike hits target
   private:
     
 };

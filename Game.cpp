@@ -6,8 +6,6 @@ Game::Game(Screen_HX8353E *screen){
   target = new Target();
   //obstacle = new Obstacle();
   strike = new Strike();
-  count_timer_1sec = 100;
-  flag_1sec = 1;
 }
 
 void Game::Display_Game() {
@@ -17,7 +15,6 @@ void Game::Display_Game() {
   screen->setPenSolid(true);
   Place_Objects();  
   Initialize_Life(); //Initialize Life
-  Start_Timer_1sec(); //
 }
 
 void Game::Clear_Objects() {

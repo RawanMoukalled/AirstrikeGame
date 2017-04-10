@@ -180,8 +180,7 @@ void Display::Read_Enter() {
     } 
   }
 }
-
-void Display::Display_Timer_1sec() {
-   screen->gText(10, 10, String(game->count_timer_1sec), whiteColour); 
-}
+//void Display::Display_Timer_1sec() {
+//   screen->gText(10, 10, String(count_timer_1sec), whiteColour); 
+//}
 

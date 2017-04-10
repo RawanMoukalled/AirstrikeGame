@@ -43,6 +43,8 @@
 Display * display;
 volatile int strikeFlag = HIGH;
 volatile int pauseFlag = HIGH;
+volatile uint16_t flag_1sec = 1; 
+volatile uint8_t count_timer_1sec = 100;
 
 void strikeInterrupt()
 {
@@ -51,6 +53,16 @@ void strikeInterrupt()
     display->game->Create_New_Strike();
   }
   pauseFlag = LOW;
+}
+
+void Timer1IntHandler(void){
+  //Required to launch next interrupt
+  ROM_TimerIntClear(TIMER1_BASE, TIMER_A);
+  flag_1sec +=1;
+  if (flag_1sec == 1600){
+      count_timer_1sec -=1;
+    Serial.println(count_timer_1sec);  
+  }
 }
 
 //Timer of 1 sec code
@@ -64,9 +76,9 @@ void Timer_1sec(uint16_t period0){
   // Examples: 120MHz / 120k = 1000 kHz ; 120MHz / 120M = 1 Hz
   ROM_TimerLoadSet(TIMER1_BASE, TIMER_A, SysCtlClockGet()/period0);
   Serial.println(SysCtlClockGet()); 
-  TimerIntRegister(TIMER1_BASE, TIMER_A, Game::&Timer1IntHandler);
-  ROM_IntEnable(INT_TIMER1A);  // Enable Timer 0A Interrupt
-  ROM_TimerIntEnable(TIMER1_BASE, TIMER_TIMA_TIMEOUT); // Timer 0A Interrupt when Timeout
+  TimerIntRegister(TIMER1_BASE, TIMER_A, &Timer1IntHandler);
+  //ROM_IntEnable(INT_TIMER1A);  // Enable Timer 0A Interrupt
+  //ROM_TimerIntEnable(TIMER1_BASE, TIMER_TIMA_TIMEOUT); // Timer 0A Interrupt when Timeout
   ROM_TimerEnable(TIMER1_BASE, TIMER_A); // Start Timer 0A
 }
 
@@ -106,8 +118,8 @@ void setup() {
   attachInterrupt(joystickSEL, strikeInterrupt, FALLING); // Interrupt is fired whenever joystick button is pressed
   //attachInterrupt(pushButton1, pauseOption, FALLING); // Interrupt is fired whenever joystick button is pressed
   
-  display->game->Timer_1sec(uint16_t period0); //configure timer for hard game (timer of 1sec)
-  configureTimer1A(50000);  //50000 * 1/80M = 1/1600
+  //display->game->Timer_1sec(uint16_t period0); //configure timer for hard game (timer of 1sec)
+  Timer_1sec(50000);  //50000 * 1/80M = 1/1600
 }
 
 

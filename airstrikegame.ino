@@ -61,7 +61,7 @@ void Timer1IntHandler(void){
   flag_1sec +=1;
   if (flag_1sec == 1600){
       count_timer_1sec -=1;
-    Serial.println(count_timer_1sec);  
+      Serial.println(count_timer_1sec);  
   }
 }
 
@@ -73,7 +73,6 @@ void Timer_1sec(uint16_t period0){
   
   // Configure Timer Frequency
   // Frequency is given by MasterClock / CustomValue
-  // Examples: 120MHz / 120k = 1000 kHz ; 120MHz / 120M = 1 Hz
   ROM_TimerLoadSet(TIMER1_BASE, TIMER_A, SysCtlClockGet()/period0);
   Serial.println(SysCtlClockGet()); 
   TimerIntRegister(TIMER1_BASE, TIMER_A, &Timer1IntHandler);
@@ -119,7 +118,7 @@ void setup() {
   //attachInterrupt(pushButton1, pauseOption, FALLING); // Interrupt is fired whenever joystick button is pressed
   
   //display->game->Timer_1sec(uint16_t period0); //configure timer for hard game (timer of 1sec)
-  Timer_1sec(50000);  //50000 * 1/80M = 1/1600
+  //Timer_1sec(50000);  //50000 * 1/80M = 1/1600
 }
 
 

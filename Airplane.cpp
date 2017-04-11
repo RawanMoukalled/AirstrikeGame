@@ -30,7 +30,7 @@ void Airplane::Change_Points(int delta) {
   int newX3 = x3 + delta;
   int newX1 = x1 + delta;
   
-  if(newX3 <= 128 && newX1 >= 0) {
+  if(newX3 < 128 && newX1 > 0) {
     x1=newX1;
     x2+=delta;
     x3=newX3;

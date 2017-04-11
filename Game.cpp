@@ -21,7 +21,7 @@ void Game::Clear_Objects() {
   screen->setPenSolid(true);
 
   //clear plane
-  //screen->triangle(plane->x1, plane->y1, plane->x2, plane->y2, plane->x3, plane->y3 , blackColour);
+  screen->triangle(plane->x1, plane->y1, plane->x2, plane->y2, plane->x3, plane->y3 , blackColour);
   screen->circle(target->x, target->y, target->radius, blackColour);
   if (strike->x != 0 and strike->y != 0)
   {
@@ -31,7 +31,7 @@ void Game::Clear_Objects() {
 }
 
 void Game::Increment_Object_Positions() {
-  //plane->Move();    
+  plane->Move();    
   target->Move();
   Serial.println(target->y);
   Serial.println(plane->y2);

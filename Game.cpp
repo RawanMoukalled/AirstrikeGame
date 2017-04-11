@@ -1,4 +1,6 @@
 #include "Game.h"
+#include <cmath>
+
 
 Game::Game(Screen_HX8353E *screen){  
   this->screen = screen;
@@ -6,6 +8,7 @@ Game::Game(Screen_HX8353E *screen){
   target = new Target();
   //obstacle = new Obstacle();
   strike = new Strike();
+  score[4] = 0;
 }
 
 void Game::Display_Game() {
@@ -33,8 +36,7 @@ void Game::Clear_Objects() {
 void Game::Increment_Object_Positions() {
   plane->Move();    
   target->Move();
-  Serial.println(target->y);
-  Serial.println(plane->y2);
+
 
   //Move the strike
   if (strike->x != 0 and strike->y != 0)
@@ -43,10 +45,11 @@ void Game::Increment_Object_Positions() {
   }
   
   //In case of collision between plane and target
-  if (target->y  == plane->y2)
+  if (distance(target->x, target->y, plane->x1, plane->y1)  <= target->radius || distance(target->x, target->y, plane->x2, plane->y2)  <= target->radius || distance(target->x, target->y, plane->x3, plane->y3)  <= target->radius )
   {
     plane-> planeLife -=1;  //decrease plane's life
     Change_Plane_Color();
+    //DELETE THE TARGET
     if (plane->planeLife == 0)
     {
       //GameOver    
@@ -55,15 +58,36 @@ void Game::Increment_Object_Positions() {
       Decrease_Life();  //decrease the life bar on the screen
     }
   }
+//
+// if ( distance(target->x, target->y, strike->x, strike->y) <= (target->radius + strike->radius) )
+//  {
+//    score[0] += 1;
+//    tm1637.display(0,score[0]);
+//    tm1637.display(1,score[1]);
+//    tm1637.display(2,score[2]);
+//    tm1637.display(3,score[3]);
+//
+//    if (score[0] == 9){
+//      score[0] = 0;
+//      score[1] += 1;
+//    }
+//    if (score[0] == 9 && score[1] ==9){
+//      score[0] = 0;
+//      score[1] = 0;
+//      score[2] +=1;
+//    }
+//    if (score[0] == 9 && score[1] == 9 && score[2] == 9){
+//      score[0] = 0;
+//      score[1] = 0;
+//      score[2] = 0;
+//      score[3] +=1;
+//    }    
 
-  if (strike->y - target->y < 10 )
-  {
-    score += 1;
-    screen->circle(target->x, target->y, target->radius, blackColour);
-  }
+//    
+//    screen->circle(target->x, target->y, target->radius, blackColour); //Instead of this function, delete the target
+//  }
   
-  Serial.println(plane->planeLife);
-  delay(50);
+  //delay(50);
 }
 
 void Game::Place_Objects() {
@@ -73,7 +97,7 @@ void Game::Place_Objects() {
   {
     screen->circle(strike->x, strike->y, strike->radius, yellowColour);
   }
-  delay(200);
+  delay(100);
 }
 
 
@@ -109,3 +133,8 @@ void Game::Change_Plane_Color(){
   delay(200);
   screen->triangle(plane->x1, plane->y1, plane->x2, plane->y2, plane->x3, plane->y3 , whiteColour);
 }   
+
+double Game::distance(int x1, int y1, int x2, int y2) {
+  return sqrt( (x1-x2)*(x1-x2) + (y1-y2)*(y1-y2) );
+}
+

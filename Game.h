@@ -5,6 +5,7 @@
 #include "Energia.h"
 #else // error
 #error Platform not defined
+
 #endif
 
 #include <SPI.h>
@@ -16,12 +17,14 @@
 #include <Terminal12e.h>
 #include <Terminal6e.h>
 #include <Terminal8e.h>
+//#include "TM1637.h"
 
 #include <vector>
 #include "Airplane.h"
 #include "Target.h"
 #include "Obstacle.h"
 #include "Strike.h"
+
 
 class Game {
   public:
@@ -38,6 +41,8 @@ class Game {
     void Decrease_Life();
     void Change_Plane_Color(); //When a collision happens between the airplane and a target/obstacle, change the plane's color to red
 
+    double distance(int x1, int y1, int x2, int y2);
+
     
     Screen_HX8353E *screen;
     Airplane * plane;
@@ -47,7 +52,8 @@ class Game {
     //Obstacle *obstacle;
     Strike *strike;
     
-    int score = 0; //increment in case strike hits target
+    int score[4]; //increment in case strike hits target
+    //TM1637 tm1637(39, 38);                  /* 4-digital display object */
   private:
     
 };

@@ -22,7 +22,15 @@ void Airplane::Move() {
   //update previous and current positions
   prevX = currX;
   currX = (int)analogRead(xAxisPin);
-  Change_Points(10*(currX-prevX));  
+
+  if(currX < 1090) {
+    currX = 1090;
+  } else if(currX > 1800) {
+    currX = 1800;
+  }
+  currX = map(currX, 1090, 1800, 0, 128);
+  Change_Points((currX-prevX));  
+  
 }
 
 //change values of the three triangle points according to accelerometer input

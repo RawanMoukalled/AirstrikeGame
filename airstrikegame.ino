@@ -35,24 +35,28 @@
 #include "driverlib/interrupt.h"
 #include "driverlib/sysctl.h"
 #include "driverlib/timer.h"
+#include "TM1637.h"
 
 #define joystickSEL 5 //pin for the joystick push button
 #define pushButton1 33 //push button for Pause option
+#define blueLED 37 //blue LED on joystick board
+#define greenLED 38 //green LED on joystick board 
+#define redLED 39 //red LED on joystick board 
 
+#define CLK               39                  /* 4-digital display clock pin */
+#define DIO               38                 /* 4-digiral display data pin */
 
 Display * display;
-volatile int strikeFlag = HIGH;
 volatile int pauseFlag = HIGH;
 volatile uint16_t flag_1sec = 1; 
 volatile uint8_t count_timer_1sec = 100;
+TM1637 tm1637(39, 38);                  /* 4-digital display object */
 
 void strikeInterrupt()
 {
   if(display->mode == GAME){
-    //strikeFlag = HIGH;
     display->game->Create_New_Strike();
   }
-  pauseFlag = LOW;
 }
 
 void Timer1IntHandler(void){
@@ -62,6 +66,7 @@ void Timer1IntHandler(void){
   if (flag_1sec == 1600){
       count_timer_1sec -=1;
       Serial.println(count_timer_1sec);  
+    //Serial.println(count_timer_1sec);  
   }
 }
 
@@ -74,7 +79,7 @@ void Timer_1sec(uint16_t period0){
   // Configure Timer Frequency
   // Frequency is given by MasterClock / CustomValue
   ROM_TimerLoadSet(TIMER1_BASE, TIMER_A, SysCtlClockGet()/period0);
-  Serial.println(SysCtlClockGet()); 
+  //Serial.println(SysCtlClockGet()); 
   TimerIntRegister(TIMER1_BASE, TIMER_A, &Timer1IntHandler);
   //ROM_IntEnable(INT_TIMER1A);  // Enable Timer 0A Interrupt
   //ROM_TimerIntEnable(TIMER1_BASE, TIMER_TIMA_TIMEOUT); // Timer 0A Interrupt when Timeout
@@ -101,7 +106,15 @@ void setup() {
   pinMode(Enter, INPUT_PULLUP);
   pinMode(joystickSEL, INPUT_PULLUP);
   pinMode(pushButton1, INPUT_PULLUP);
-     
+
+  //turn off green and blue LEDs
+  pinMode(blueLED, OUTPUT);
+  pinMode(greenLED, OUTPUT);
+  pinMode(redLED, OUTPUT);
+  digitalWrite(blueLED, LOW);
+  digitalWrite(greenLED, LOW);
+  digitalWrite(redLED, LOW);
+      
   display = new Display();
     
   display->screen->begin();
@@ -119,11 +132,19 @@ void setup() {
   
   //display->game->Timer_1sec(uint16_t period0); //configure timer for hard game (timer of 1sec)
   //Timer_1sec(50000);  //50000 * 1/80M = 1/1600
+
+   //Initialize the 4 Digit Display
+   tm1637.init();
+   tm1637.set(BRIGHT_TYPICAL);
+   tm1637.display(0,0);
+   tm1637.display(1,0);
+   tm1637.display(2,0);
+   tm1637.display(3,0);
 }
 
 
 // Add loop code
-void loop() {
+void loop() {  
   if(display->mode == SELECTTYPE || display->mode == SELECTDIFFICULTY || display->mode == PAUSE){
     display->Read_Joystick();
     display->Read_Enter();
@@ -131,9 +152,6 @@ void loop() {
   }
 
   else if(display->mode == GAME) {
-    if (strikeFlag){
-      strikeFlag = LOW;
-    }
     display->game->Clear_Objects();
     display->game->Increment_Object_Positions();
     display->game->Place_Objects();

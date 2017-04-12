@@ -25,6 +25,11 @@
 #include "Obstacle.h"
 #include "Strike.h"
 
+#include "driverlib/rom.h"
+#include "driverlib/interrupt.h"
+#include "driverlib/sysctl.h"
+#include "driverlib/timer.h"
+
 
 class Game {
   public:
@@ -43,17 +48,27 @@ class Game {
 
     double distance(int x1, int y1, int x2, int y2);
 
+    //hard timer handler
+    void Hard_Timer();
+
+    //generation timer handler
+    void Generation_Timer();
     
     Screen_HX8353E *screen;
     Airplane * plane;
-    //Vector<Target*> targets;
+    //std::vector<Target*> targets;
     Target * target;
     std::vector<Obstacle*> obstacles;
-    //Obstacle *obstacle;
+    
     Strike *strike;
-    
-  private:
-    
+
+    //hard timer variables
+    volatile uint16_t flag_1sec; 
+    volatile uint8_t remaining_time;
+
+    //obstacle and target generation timer variables
+    volatile uint16_t flag_random; 
+    volatile uint16_t count_timer_random;
 };
 
 #endif

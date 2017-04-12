@@ -10,7 +10,11 @@ Game::Game(Screen_HX8353E *screen){
   //CHANGE
   strike = new Strike();
 
-  
+  flag_1sec = 1;
+  remaining_time = 120; //in seconds
+
+  flag_random = 1;
+  count_timer_random = 10; //placeholder value to be later determined
 
 }
 
@@ -122,5 +126,19 @@ void Game::Change_Plane_Color(){
 
 double Game::distance(int x1, int y1, int x2, int y2) {
   return sqrt( (x1-x2)*(x1-x2) + (y1-y2)*(y1-y2) );
+}
+
+void Game::Hard_Timer() {
+  
+}
+
+void Game::Generation_Timer() {
+   //Required to launch next interrupt
+  ROM_TimerIntClear(TIMER0_BASE, TIMER_A);
+  flag_random +=1;
+  if (flag_random == 8000){
+      count_timer_random -=1;
+      Serial.println(count_timer_random);
+  } 
 }
 

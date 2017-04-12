@@ -48,12 +48,10 @@ class Game {
     Airplane * plane;
     //Vector<Target*> targets;
     Target * target;
-    //Vector<Obstacle*> obstacles;
+    std::vector<Obstacle*> obstacles;
     //Obstacle *obstacle;
     Strike *strike;
     
-    int score[4]; //increment in case strike hits target
-    //TM1637 tm1637(39, 38);                  /* 4-digital display object */
   private:
     
 };

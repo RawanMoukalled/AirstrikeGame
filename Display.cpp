@@ -4,6 +4,14 @@
 
 Display::Display() {
   screen  = &(Display::screen_main);  
+  
+  tm1637 = new TM1637(39, 38);   
+  tm1637->init();
+  tm1637->set(BRIGHT_TYPICAL);
+
+  Set_7Seg(9876);
+
+  right_after_display = true;
 }
  
 
@@ -73,11 +81,6 @@ void Display::Read_Joystick() {
   }
 }
 
-//check for joystick push button
-void Display::Read_Joystick_Button(){
-  digitalRead(joystickSEL);
-  delay(50);
-}
 
 void Display::Display_Select_Difficulty() {
   mode = SELECTDIFFICULTY;
@@ -124,12 +127,15 @@ void Display::Display_New_Page(uint16_t y) {
   else if(mode == SELECTDIFFICULTY) {
     //easy mode
     if(y == 50){
+      right_after_display = true;
       game = new Game(screen);
       mode = GAME;
       game->Display_Game();
+     
     } 
     //hard mode
     else if(y == 70) {
+      delay(50);
     }
     //back to select type
     else if(y == 90) {
@@ -169,16 +175,21 @@ void Display::Display_New_Page(uint16_t y) {
 
 // check for the push button being pressed
 void Display::Read_Enter() {
-    int enterState = digitalRead(Enter);
+    //int enterState = digitalRead(Enter);
     
     //button has been pushed
-    if(enterState == LOW) {
+    //if(enterState == LOW) {
       if(mode == SELECTTYPE || mode == SELECTDIFFICULTY || mode == GAME || mode == PAUSE){
         Display_New_Page(arrowY);
-    }
+    //}
   }
 }
-//void Display::Display_Timer_1sec() {
-//   screen->gText(10, 10, String(count_timer_1sec), whiteColour); 
-//}
+
+void Display::Set_7Seg(int num) {
+   tm1637->display(0,(num/1000)%10);
+   tm1637->display(1,(num/100)%10);
+   tm1637->display(2,(num/10)%10);
+   tm1637->display(3,num%10);
+}
+
 

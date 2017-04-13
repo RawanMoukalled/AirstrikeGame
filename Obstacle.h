@@ -1,5 +1,5 @@
-#ifndef target_h
-#define target_h
+#ifndef obstacle_h
+#define obstacle_h
 
 #if defined(ENERGIA) // LaunchPad MSP430, Stellaris and Tiva, Experimeter Board FR5739 specific
 #include "Energia.h"
@@ -12,9 +12,11 @@
 
 class Obstacle {
   public: 
-    Obstacle();
-    void Initialize_Parameters();
+    Obstacle(int x, int y);
+    void Initialize_Parameters(int x, int y);
     void Move();
+
+    int x, y;
     
 };
 

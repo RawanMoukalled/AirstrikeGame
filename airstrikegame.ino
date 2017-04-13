@@ -10,7 +10,7 @@
 /// @author Jean Abou Rahal
 /// @author Rawan Moukalled
 ///
-/// @date April 25, 2017
+/// @date April 21, 2017
 /// @version  1
 ///
 ///
@@ -35,21 +35,19 @@
 #include "driverlib/interrupt.h"
 #include "driverlib/sysctl.h"
 #include "driverlib/timer.h"
-#include "TM1637.h"
+
 
 #define joystickSEL 5 //pin for the joystick push button
-#define pushButton1 33 //push button for Pause option
 #define blueLED 37 //blue LED on joystick board
 #define greenLED 38 //green LED on joystick board 
 #define redLED 39 //red LED on joystick board 
 
-#define CLK               39                  /* 4-digital display clock pin */
-#define DIO               38                 /* 4-digiral display data pin */
+#define Enter 32 //pin for the Push button
 
 Display * display;
-volatile int pauseFlag = HIGH;
 volatile uint16_t flag_1sec = 1; 
 volatile uint8_t count_timer_1sec = 100;
+
 TM1637 tm1637(39, 38);                  /* 4-digital display object */
 
 void strikeInterrupt()
@@ -70,6 +68,9 @@ void Timer1IntHandler(void){
   }
 }
 
+
+
+
 //Timer of 1 sec code
 void Timer_1sec(uint16_t period0){
   ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_TIMER1); // Enable Timer 0 Clock
@@ -87,25 +88,57 @@ void Timer_1sec(uint16_t period0){
 }
 
 
-
-//void pauseOption()
-//{
-//  if(display->mode == GAME){
-//    //strikeFlag = HIGH;
-//    display->game->Create_New_Strike();
+void TimerRandomIntHandler(void){
+  //Required to launch next interrupt
+//  ROM_TimerIntClear(TIMER0_BASE, TIMER_A);
+//  flag_random +=1;
+//  if (flag_random == 8000){
+//      count_timer_random -=1;
 //  }
-//  strikeFlag = LOW;
-//}
+
+    if(display->mode == GAME) {
+      display->game->Generation_Timer();
+    }
+}
+
+
+
+//Timer of 1 sec code
+void Timer_Random(uint16_t period0){
+  ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_TIMER0); // Enable Timer 0 Clock
+  ROM_IntMasterEnable(); // Enable Interrupts
+  ROM_TimerConfigure(TIMER0_BASE, TIMER_CFG_PERIODIC); // Configure Timer Operation as Periodic
+  
+  // Configure Timer Frequency
+  // Frequency is given by MasterClock / CustomValue
+  ROM_TimerLoadSet(TIMER0_BASE, TIMER_A, SysCtlClockGet()/period0);
+ TimerIntRegister(TIMER0_BASE, TIMER_A, &TimerRandomIntHandler);
+  ROM_IntEnable(INT_TIMER0A);  // Enable Timer 0A Interrupt
+  ROM_TimerIntEnable(TIMER0_BASE, TIMER_TIMA_TIMEOUT); // Timer 0A Interrupt when Timeout
+  ROM_TimerEnable(TIMER0_BASE, TIMER_A); // Start Timer 0A
+}
+
+
+
+volatile uint16_t flag_random = 1; 
+volatile uint16_t count_timer_random = 1000;
+
+//Prototypes
+void ReadEnterIntHandler();
+void StrikeIntHandler();
+void Timer1IntHandler(void);
+void Timer_1sec(uint16_t period0);
+void Timer_Random(uint16_t period0);
 
 
 // Add setup code
 void setup() {
   Serial.begin(9600); //UART with its baudrate
   delay(100);
+  
   //Declare inputs
   pinMode(Enter, INPUT_PULLUP);
   pinMode(joystickSEL, INPUT_PULLUP);
-  pinMode(pushButton1, INPUT_PULLUP);
 
   //turn off green and blue LEDs
   pinMode(blueLED, OUTPUT);
@@ -116,16 +149,13 @@ void setup() {
   digitalWrite(redLED, LOW);
       
   display = new Display();
-    
   display->screen->begin();
-  display->screen->setOrientation(0);
-    
+  display->screen->setOrientation(0);  
   display->Initialize_Screen();  //Print first the message: "Airstrike Game"
-  delay(2000);
-    
+  delay(2000);  
   display->screen->clear();   //Go to the next page
-    
   display->Display_Select_Type();   //User can choose between a new game or to load a saved game  
+
 
   attachInterrupt(joystickSEL, strikeInterrupt, FALLING); // Interrupt is fired whenever joystick button is pressed
   //attachInterrupt(pushButton1, pauseOption, FALLING); // Interrupt is fired whenever joystick button is pressed
@@ -140,14 +170,18 @@ void setup() {
    tm1637.display(1,0);
    tm1637.display(2,0);
    tm1637.display(3,0);
+
+
+  attachInterrupt(Enter, ReadEnterIntHandler, FALLING);
+
+
+  Timer_Random(50000);
+
 }
 
-
-// Add loop code
 void loop() {  
   if(display->mode == SELECTTYPE || display->mode == SELECTDIFFICULTY || display->mode == PAUSE){
     display->Read_Joystick();
-    display->Read_Enter();
     delay(200);  
   }
 
@@ -155,9 +189,40 @@ void loop() {
     display->game->Clear_Objects();
     display->game->Increment_Object_Positions();
     display->game->Place_Objects();
-    display->Read_Enter();    //Change this to become an interrupt -->optimal
   }
 }
+
+void ReadEnterIntHandler() {
+  if(display->mode == SELECTTYPE || display->mode == SELECTDIFFICULTY || display->mode == PAUSE){
+    display->Read_Enter();
+  }
+
+  
+  if(display->mode == GAME){
+    //right after loading a new game onto the screen using the enter pushbutton,
+    //the same enter is being read after loading the game and so the create strike function 
+    //is called. so this boolean prevents it from being called the first time, and then enables it
+    if(display->right_after_display) {
+      display->right_after_display = false;
+    } else {
+      display->game->Create_New_Strike();
+    }
+  }
+  
+  delay(100);
+}
+
+void StrikeIntHandler() {
+  if(display->mode == GAME){
+    display->game->Create_New_Strike();
+  }
+}
+
+
+
+
+
+
 
 
 

@@ -7,8 +7,15 @@ Game::Game(Screen_HX8353E *screen){
   plane = new Airplane();
   target = new Target();
   //obstacle = new Obstacle();
+  //CHANGE
   strike = new Strike();
-  score[4] = 0;
+
+  flag_1sec = 1;
+  remaining_time = 120; //in seconds
+
+  flag_random = 1;
+  count_timer_random = 10; //placeholder value to be later determined
+
 }
 
 void Game::Display_Game() {
@@ -17,6 +24,7 @@ void Game::Display_Game() {
   screen->setFontSize(1);
   screen->setPenSolid(true);
   Place_Objects();  
+  //CHANGE
   Initialize_Life(); //Initialize Life
 }
 
@@ -26,6 +34,9 @@ void Game::Clear_Objects() {
   //clear plane
   screen->triangle(plane->x1, plane->y1, plane->x2, plane->y2, plane->x3, plane->y3 , blackColour);
   screen->circle(target->x, target->y, target->radius, blackColour);
+
+  //CHANGE
+  //if strike goes out of the screen delete it
   if (strike->x != 0 and strike->y != 0)
   {
     screen->circle(strike->x, strike->y, strike->radius, blackColour);
@@ -38,12 +49,14 @@ void Game::Increment_Object_Positions() {
   target->Move();
 
 
+  //CHANGE move if it's still in the bound obv
   //Move the strike
   if (strike->x != 0 and strike->y != 0)
   {
     strike->Move();
   }
-  
+
+  //CHANGE
   //In case of collision between plane and target
   if (distance(target->x, target->y, plane->x1, plane->y1)  <= target->radius || distance(target->x, target->y, plane->x2, plane->y2)  <= target->radius || distance(target->x, target->y, plane->x3, plane->y3)  <= target->radius )
   {
@@ -58,36 +71,13 @@ void Game::Increment_Object_Positions() {
       Decrease_Life();  //decrease the life bar on the screen
     }
   }
-//
-// if ( distance(target->x, target->y, strike->x, strike->y) <= (target->radius + strike->radius) )
-//  {
-//    score[0] += 1;
-//    tm1637.display(0,score[0]);
-//    tm1637.display(1,score[1]);
-//    tm1637.display(2,score[2]);
-//    tm1637.display(3,score[3]);
-//
-//    if (score[0] == 9){
-//      score[0] = 0;
-//      score[1] += 1;
-//    }
-//    if (score[0] == 9 && score[1] ==9){
-//      score[0] = 0;
-//      score[1] = 0;
-//      score[2] +=1;
-//    }
-//    if (score[0] == 9 && score[1] == 9 && score[2] == 9){
-//      score[0] = 0;
-//      score[1] = 0;
-//      score[2] = 0;
-//      score[3] +=1;
-//    }    
 
-//    
-//    screen->circle(target->x, target->y, target->radius, blackColour); //Instead of this function, delete the target
-//  }
+ if ( distance(target->x, target->y, strike->x, strike->y) <= (target->radius + strike->radius) )
+  {
+
+  }
   
-  //delay(50);
+  
 }
 
 void Game::Place_Objects() {
@@ -112,7 +102,7 @@ void Game::Create_New_Strike(){
   strike->x = plane->x2;
   strike->y = plane->y2-5;
   screen->circle(strike->x, strike->y, strike->radius, yellowColour);
-  //delay(100);
+  
 }
 
 void Game::Initialize_Objects() {
@@ -136,5 +126,19 @@ void Game::Change_Plane_Color(){
 
 double Game::distance(int x1, int y1, int x2, int y2) {
   return sqrt( (x1-x2)*(x1-x2) + (y1-y2)*(y1-y2) );
+}
+
+void Game::Hard_Timer() {
+  
+}
+
+void Game::Generation_Timer() {
+   //Required to launch next interrupt
+  ROM_TimerIntClear(TIMER0_BASE, TIMER_A);
+  flag_random +=1;
+  if (flag_random == 8000){
+      count_timer_random -=1;
+      Serial.println(count_timer_random);
+  } 
 }
 

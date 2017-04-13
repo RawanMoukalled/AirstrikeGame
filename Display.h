@@ -19,11 +19,15 @@
 #include <Terminal8e.h>
 
 #include "Game.h"
+#include "TM1637.h"
 
 #define joystickX 2 //pin for the joystick X coordinates
 #define joystickY 26 //pin for the joystick Y coordinates
 #define joystickSEL 5 //pin for the joystick push button
-#define Enter 32 //pin for the Push button
+
+#define CLK 39                  /* 4-digital display clock pin */
+#define DIO 38                 /* 4-digiral display data pin */
+
 
 // Define variables and constants
 
@@ -42,22 +46,21 @@ class Display {
     void Display_Select_Type();
     void Place_Arrow(uint16_t x, uint16_t y);
     void Read_Joystick(); //to move arrow
-    void Read_Joystick_Button(); //to strike
     void Display_Select_Difficulty();
     void Display_New_Page(uint16_t y);
     void Read_Enter();
     void Display_Paused_Game();
-    void Display_Timer_1sec();
-    
-    screen_mode_t mode;
+    void Set_7Seg(int num);
 
+    screen_mode_t mode;
     uint16_t jsX, jsY, arrowX, arrowY; //current positions of the joystick and arrow 
-    
-    
+
     Screen_HX8353E screen_main; 
     Screen_HX8353E *screen;//pointer to the screen
-
+    TM1637 *tm1637;       
     Game * game;
+
+    bool right_after_display; 
 
 };
 

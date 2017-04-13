@@ -43,7 +43,6 @@
 #define redLED 39 //red LED on joystick board 
 
 #define Enter 32 //pin for the Push button
-#define EnterUpper 33 //pin for the upper push button
 
 Display * display;
 volatile uint16_t flag_1sec = 1; 
@@ -86,7 +85,8 @@ void setup() {
   display->Display_Select_Type();   //User can choose between a new game or to load a saved game  
 
   attachInterrupt(Enter, ReadEnterIntHandler, FALLING);
-  attachInterrupt(EnterUpper, ReadEnterIntHandler, FALLING);
+
+
 }
 
 void loop() {  
@@ -106,6 +106,7 @@ void ReadEnterIntHandler() {
   if(display->mode == SELECTTYPE || display->mode == SELECTDIFFICULTY || display->mode == PAUSE){
     display->Read_Enter();
   }
+
   
   if(display->mode == GAME){
     //right after loading a new game onto the screen using the enter pushbutton,
@@ -137,6 +138,13 @@ void Timer1IntHandler(void){
 }
 
 void TimerRandomIntHandler(void){
+  //Required to launch next interrupt
+//  ROM_TimerIntClear(TIMER0_BASE, TIMER_A);
+//  flag_random +=1;
+//  if (flag_random == 8000){
+//      count_timer_random -=1;
+//  }
+
     if(display->mode == GAME) {
       display->game->Generation_Timer();
     }

@@ -175,8 +175,13 @@ void Display::Display_New_Page(uint16_t y) {
 
 // check for the push button being pressed
 void Display::Read_Enter() {
+    //int enterState = digitalRead(Enter);
+    
+    //button has been pushed
+    //if(enterState == LOW) {
       if(mode == SELECTTYPE || mode == SELECTDIFFICULTY || mode == GAME || mode == PAUSE){
-        Display_New_Page(arrowY); 
+        Display_New_Page(arrowY);
+    //}
   }
 }
 

@@ -15,3 +15,4 @@ void Strike::Move() {
   y -= 10; 
 }
 
+

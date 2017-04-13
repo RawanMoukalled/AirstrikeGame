@@ -43,82 +43,11 @@
 #define redLED 39 //red LED on joystick board 
 
 #define Enter 32 //pin for the Push button
+#define EnterUpper 33 //pin for the upper push button
 
 Display * display;
 volatile uint16_t flag_1sec = 1; 
 volatile uint8_t count_timer_1sec = 100;
-
-TM1637 tm1637(39, 38);                  /* 4-digital display object */
-
-void strikeInterrupt()
-{
-  if(display->mode == GAME){
-    display->game->Create_New_Strike();
-  }
-}
-
-void Timer1IntHandler(void){
-  //Required to launch next interrupt
-  ROM_TimerIntClear(TIMER1_BASE, TIMER_A);
-  flag_1sec +=1;
-  if (flag_1sec == 500){
-      count_timer_1sec -=1;
-      Serial.println(count_timer_1sec);  
-    //Serial.println(count_timer_1sec);  
-  }
-}
-
-
-
-
-//Timer of 1 sec code
-void Timer_1sec(uint16_t period0){
-  ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_TIMER1); // Enable Timer 0 Clock
-  ROM_IntMasterEnable(); // Enable Interrupts
-  ROM_TimerConfigure(TIMER1_BASE, TIMER_CFG_PERIODIC); // Configure Timer Operation as Periodic
-  
-  // Configure Timer Frequency
-  // Frequency is given by MasterClock / CustomValue
-  ROM_TimerLoadSet(TIMER1_BASE, TIMER_A, SysCtlClockGet()/period0);
-  //Serial.println(SysCtlClockGet()); 
-  TimerIntRegister(TIMER1_BASE, TIMER_A, &Timer1IntHandler);
-  ROM_IntEnable(INT_TIMER1A);  // Enable Timer 0A Interrupt
-  ROM_TimerIntEnable(TIMER1_BASE, TIMER_TIMA_TIMEOUT); // Timer 0A Interrupt when Timeout
-  ROM_TimerEnable(TIMER1_BASE, TIMER_A); // Start Timer 0A
-}
-
-
-void TimerRandomIntHandler(void){
-  //Required to launch next interrupt
-//  ROM_TimerIntClear(TIMER0_BASE, TIMER_A);
-//  flag_random +=1;
-//  if (flag_random == 8000){
-//      count_timer_random -=1;
-//  }
-
-    if(display->mode == GAME) {
-      display->game->Generation_Timer();
-    }
-}
-
-
-
-//Timer of 1 sec code
-void Timer_Random(uint16_t period0){
-  ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_TIMER0); // Enable Timer 0 Clock
-  ROM_IntMasterEnable(); // Enable Interrupts
-  ROM_TimerConfigure(TIMER0_BASE, TIMER_CFG_PERIODIC); // Configure Timer Operation as Periodic
-  
-  // Configure Timer Frequency
-  // Frequency is given by MasterClock / CustomValue
-  ROM_TimerLoadSet(TIMER0_BASE, TIMER_A, SysCtlClockGet()/period0);
- TimerIntRegister(TIMER0_BASE, TIMER_A, &TimerRandomIntHandler);
-  ROM_IntEnable(INT_TIMER0A);  // Enable Timer 0A Interrupt
-  ROM_TimerIntEnable(TIMER0_BASE, TIMER_TIMA_TIMEOUT); // Timer 0A Interrupt when Timeout
-  ROM_TimerEnable(TIMER0_BASE, TIMER_A); // Start Timer 0A
-}
-
-
 
 volatile uint16_t flag_random = 1; 
 volatile uint16_t count_timer_random = 1000;
@@ -156,27 +85,8 @@ void setup() {
   display->screen->clear();   //Go to the next page
   display->Display_Select_Type();   //User can choose between a new game or to load a saved game  
 
-
-  attachInterrupt(joystickSEL, strikeInterrupt, FALLING); // Interrupt is fired whenever joystick button is pressed
-  //attachInterrupt(pushButton1, pauseOption, FALLING); // Interrupt is fired whenever joystick button is pressed
-  
-  //display->game->Timer_1sec(uint16_t period0); //configure timer for hard game (timer of 1sec)
-  Timer_1sec(50000);  //50000 * 1/80M = 1/1600
-
-   //Initialize the 4 Digit Display
-   tm1637.init();
-   tm1637.set(BRIGHT_TYPICAL);
-   tm1637.display(0,0);
-   tm1637.display(1,0);
-   tm1637.display(2,0);
-   tm1637.display(3,0);
-
-
   attachInterrupt(Enter, ReadEnterIntHandler, FALLING);
-
-
-  Timer_Random(50000);
-
+  attachInterrupt(EnterUpper, ReadEnterIntHandler, FALLING);
 }
 
 void loop() {  
@@ -196,7 +106,6 @@ void ReadEnterIntHandler() {
   if(display->mode == SELECTTYPE || display->mode == SELECTDIFFICULTY || display->mode == PAUSE){
     display->Read_Enter();
   }
-
   
   if(display->mode == GAME){
     //right after loading a new game onto the screen using the enter pushbutton,
@@ -218,10 +127,51 @@ void StrikeIntHandler() {
   }
 }
 
+void Timer1IntHandler(void){
+  //Required to launch next interrupt
+  ROM_TimerIntClear(TIMER1_BASE, TIMER_A);
+  flag_1sec +=1;
+  if (flag_1sec == 1600){
+      count_timer_1sec -=1;
+  }
+}
+
+void TimerRandomIntHandler(void){
+    if(display->mode == GAME) {
+      display->game->Generation_Timer();
+    }
+}
 
 
+//Timer of 1 sec code
+void Timer_1sec(uint16_t period0){
+  ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_TIMER1); // Enable Timer 1 Clock
+  ROM_IntMasterEnable(); // Enable Interrupts
+  ROM_TimerConfigure(TIMER1_BASE, TIMER_CFG_PERIODIC); // Configure Timer Operation as Periodic
+  
+  // Configure Timer Frequency
+  // Frequency is given by MasterClock / CustomValue
+  ROM_TimerLoadSet(TIMER1_BASE, TIMER_A, SysCtlClockGet()/period0);
+  TimerIntRegister(TIMER1_BASE, TIMER_A, &Timer1IntHandler);
+  ROM_IntEnable(INT_TIMER1A);  // Enable Timer 1A Interrupt
+  ROM_TimerIntEnable(TIMER1_BASE, TIMER_TIMA_TIMEOUT); // Timer 1A Interrupt when Timeout
+  ROM_TimerEnable(TIMER1_BASE, TIMER_A); // Start Timer 1A
+}
 
-
+//Timer of 1 sec code
+void Timer_Random(uint16_t period0){
+  ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_TIMER0); // Enable Timer 0 Clock
+  ROM_IntMasterEnable(); // Enable Interrupts
+  ROM_TimerConfigure(TIMER0_BASE, TIMER_CFG_PERIODIC); // Configure Timer Operation as Periodic
+  
+  // Configure Timer Frequency
+  // Frequency is given by MasterClock / CustomValue
+  ROM_TimerLoadSet(TIMER0_BASE, TIMER_A, SysCtlClockGet()/period0);
+ TimerIntRegister(TIMER0_BASE, TIMER_A, &TimerRandomIntHandler);
+  ROM_IntEnable(INT_TIMER0A);  // Enable Timer 0A Interrupt
+  ROM_TimerIntEnable(TIMER0_BASE, TIMER_TIMA_TIMEOUT); // Timer 0A Interrupt when Timeout
+  ROM_TimerEnable(TIMER0_BASE, TIMER_A); // Start Timer 0A
+}
 
 
 

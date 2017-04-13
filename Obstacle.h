@@ -21,3 +21,4 @@ class Obstacle {
 };
 
 #endif
+

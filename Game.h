@@ -39,7 +39,7 @@ class Game {
     void Clear_Objects();
     void Increment_Object_Positions();
     void Place_Objects();
-    void Create_New_Strike();
+    //void Create_New_Strike();
 
     void Initialize_Life();
     void Initialize_Score();
@@ -62,7 +62,9 @@ class Game {
     Target * target;
     std::vector<Obstacle*> obstacles;
     
-    Strike *strike;
+    int score;
+    
+    //Strike *strike;
 
     //hard timer variables
     volatile uint16_t flag_1sec; 
@@ -71,9 +73,9 @@ class Game {
     //obstacle and target generation timer variables
     volatile uint16_t flag_random; 
     volatile uint16_t count_timer_random;
+    int random_time; //randomizes the times in which a new obstacle or target are created
 
-    //Score
-    int score;
+    
 };
 
 #endif

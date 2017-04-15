@@ -13,7 +13,7 @@
 class Target {
   public: 
     Target();
-    void Initialize_Parameters();
+    void Initialize_Parameters(int x, int y, int radius);
     void Move();
     int x, y, radius;
 };

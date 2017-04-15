@@ -22,7 +22,7 @@ void Airplane::Move() {
   //update previous and current positions
   prevX = currX;
   currX = (int)analogRead(xAxisPin);
-  Serial.println(currX);
+  //Serial.println(currX);
 
   if(currX < 1090) {
     currX = 1090;

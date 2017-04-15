@@ -54,7 +54,6 @@ volatile uint16_t count_timer_random = 1000;
 //Prototypes
 void ReadEnterIntHandler();
 void ReadJoystickPressIntHandler();
-void StrikeIntHandler();
 void Timer1IntHandler(void);
 void Timer_1sec(uint16_t period0);
 void Timer_Random(uint16_t period0);
@@ -76,6 +75,11 @@ void setup() {
   digitalWrite(blueLED, LOW);
   digitalWrite(greenLED, LOW);
   digitalWrite(redLED, LOW);
+
+  pinMode(BUZZER_PIN, OUTPUT);  
+  //digitalWrite(BUZZER_PIN, HIGH);
+  //delay(200);
+  //digitalWrite(BUZZER_PIN, LOW);
       
   display = new Display();
   display->screen->begin();
@@ -84,20 +88,21 @@ void setup() {
   delay(2000);  
   display->screen->clear();   //Go to the next page
   display->Display_Select_Type();   //User can choose between a new game or to load a saved game  
+  
+  randomSeed(analogRead(0)); //seed for generating random numbers
 
   attachInterrupt(Enter, ReadEnterIntHandler, FALLING);
-  pinMode(BUZZER_PIN, OUTPUT);  
-  digitalWrite(BUZZER_PIN, HIGH);
-  delay(200);
-  digitalWrite(BUZZER_PIN, LOW);
-
   attachInterrupt(JoystickPress, ReadJoystickPressIntHandler, FALLING);
+
+  Timer_Random(50000);
 
 }
 
 void loop() {  
+  Serial.println(random(0,118));
   if(display->mode == SELECTTYPE || display->mode == SELECTDIFFICULTY || display->mode == PAUSE){
     display->Read_Joystick();
+    Serial.println("in here");
     delay(200);  
   }
 
@@ -118,26 +123,18 @@ void ReadEnterIntHandler() {
   if(display->mode == SELECTTYPE || display->mode == SELECTDIFFICULTY || display->mode == PAUSE){
     display->Read_Enter();
   }
-
-  
-  if(display->mode == GAME){
+  else if(display->mode == GAME){
     //right after loading a new game onto the screen using the enter pushbutton,
     //the same enter is being read after loading the game and so the create strike function 
     //is called. so this boolean prevents it from being called the first time, and then enables it
     if(display->right_after_display) {
       display->right_after_display = false;
     } else {
-      display->game->Create_New_Strike();
+      //display->game->Create_New_Strike();
     }
   }
   
   delay(100);
-}
-
-void StrikeIntHandler() {
-  if(display->mode == GAME){
-    display->game->Create_New_Strike();
-  }
 }
 
 void Timer1IntHandler(void){
@@ -147,14 +144,14 @@ void Timer1IntHandler(void){
   if (flag_1sec == 1600){
       count_timer_1sec -=1;
   }
+  loop();
 }
 
 void TimerRandomIntHandler(void){
-
-
     if(display->mode == GAME) {
       display->game->Generation_Timer();
     }
+    loop();
 }
 
 

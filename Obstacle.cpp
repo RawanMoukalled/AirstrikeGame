@@ -10,7 +10,7 @@ void Obstacle::Initialize_Parameters(int x, int y) {
 }
 
 void Obstacle::Move() {
-
+  y+=10;
 }
 
 

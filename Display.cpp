@@ -72,6 +72,7 @@ void Display::Read_Joystick() {
   //convert from input to output range, Y goes from 0 to 128 top to bottom of the screen
   jsX = map(analogRead(joystickX), 0, 4096, 0, 128);
   jsY = map(analogRead(joystickY), 0, 4096, 128, 0);
+  Serial.println("hellooo");
   
   //joystick was moved down
   if( jsY > 90) {
@@ -177,8 +178,7 @@ void Display::Display_New_Page(uint16_t y) {
 void Display::Read_Enter() {
       if(mode == SELECTTYPE || mode == SELECTDIFFICULTY || mode == GAME || mode == PAUSE){
         Display_New_Page(arrowY);
-        //NEW
-        delay(100);
+        delay(1000);
   }
 }
 

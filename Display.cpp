@@ -9,7 +9,7 @@ Display::Display() {
   tm1637->init();
   tm1637->set(BRIGHT_TYPICAL);
 
-  Set_7Seg(9876);
+  Set_7Seg(9999);
 
   right_after_display = true;
 }
@@ -175,13 +175,10 @@ void Display::Display_New_Page(uint16_t y) {
 
 // check for the push button being pressed
 void Display::Read_Enter() {
-    //int enterState = digitalRead(Enter);
-    
-    //button has been pushed
-    //if(enterState == LOW) {
       if(mode == SELECTTYPE || mode == SELECTDIFFICULTY || mode == GAME || mode == PAUSE){
         Display_New_Page(arrowY);
-    //}
+        //NEW
+        delay(100);
   }
 }
 

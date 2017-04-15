@@ -42,6 +42,8 @@ class Game {
     void Create_New_Strike();
 
     void Initialize_Life();
+    void Initialize_Score();
+    void Increase_score();
     void Start_Timer_1sec();
     void Decrease_Life();
     void Change_Plane_Color(); //When a collision happens between the airplane and a target/obstacle, change the plane's color to red
@@ -69,6 +71,9 @@ class Game {
     //obstacle and target generation timer variables
     volatile uint16_t flag_random; 
     volatile uint16_t count_timer_random;
+
+    //Score
+    int score;
 };
 
 #endif

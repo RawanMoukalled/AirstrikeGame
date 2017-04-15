@@ -36,14 +36,13 @@
 #include "driverlib/sysctl.h"
 #include "driverlib/timer.h"
 
-
-#define joystickSEL 5 //pin for the joystick push button
 #define blueLED 37 //blue LED on joystick board
 #define greenLED 38 //green LED on joystick board 
 #define redLED 39 //red LED on joystick board 
 
 #define Enter 32 //pin for the Push button
 #define BUZZER_PIN 40
+#define JoystickPress 5 //pin for the upper push button 
 
 Display * display;
 volatile uint16_t flag_1sec = 1; 
@@ -54,6 +53,7 @@ volatile uint16_t count_timer_random = 1000;
 
 //Prototypes
 void ReadEnterIntHandler();
+void ReadJoystickPressIntHandler();
 void StrikeIntHandler();
 void Timer1IntHandler(void);
 void Timer_1sec(uint16_t period0);
@@ -91,6 +91,8 @@ void setup() {
   delay(200);
   digitalWrite(BUZZER_PIN, LOW);
 
+  attachInterrupt(JoystickPress, ReadJoystickPressIntHandler, FALLING);
+
 }
 
 void loop() {  
@@ -103,6 +105,12 @@ void loop() {
     display->game->Clear_Objects();
     display->game->Increment_Object_Positions();
     display->game->Place_Objects();
+  }
+}
+
+void ReadJoystickPressIntHandler() {
+  if(display->mode == GAME) {
+    display->Read_Enter();
   }
 }
 
@@ -142,12 +150,7 @@ void Timer1IntHandler(void){
 }
 
 void TimerRandomIntHandler(void){
-  //Required to launch next interrupt
-//  ROM_TimerIntClear(TIMER0_BASE, TIMER_A);
-//  flag_random +=1;
-//  if (flag_random == 8000){
-//      count_timer_random -=1;
-//  }
+
 
     if(display->mode == GAME) {
       display->game->Generation_Timer();

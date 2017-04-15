@@ -5,8 +5,8 @@ Target::Target() {
 }
 
 void Target::Initialize_Parameters() {
-  x = 59;
-  y = 5; 
+  x = 70;
+  y = 20; 
   radius = 7; 
 }
 

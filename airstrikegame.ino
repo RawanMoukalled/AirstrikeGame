@@ -43,6 +43,7 @@
 #define redLED 39 //red LED on joystick board 
 
 #define Enter 32 //pin for the Push button
+#define BUZZER_PIN 40
 
 Display * display;
 volatile uint16_t flag_1sec = 1; 
@@ -85,7 +86,10 @@ void setup() {
   display->Display_Select_Type();   //User can choose between a new game or to load a saved game  
 
   attachInterrupt(Enter, ReadEnterIntHandler, FALLING);
-
+  pinMode(BUZZER_PIN, OUTPUT);  
+  digitalWrite(BUZZER_PIN, HIGH);
+  delay(200);
+  digitalWrite(BUZZER_PIN, LOW);
 
 }
 

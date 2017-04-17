@@ -33,7 +33,7 @@ void Game::Clear_Objects() {
   screen->triangle(plane->x1, plane->y1, plane->x2, plane->y2, plane->x3, plane->y3 , blackColour);
   Color_Targets(blackColour);
   Color_Strikes(blackColour);
-  //Delete_Strikes_Targets();
+  Delete_Strikes_Targets();
 }
 
 void Game::Increment_Object_Positions() {
@@ -56,6 +56,16 @@ void Game::Increment_Object_Positions() {
 void Game::Place_Objects() {
     
   Detect_Strike_Hits();
+
+   for (std::vector<Strike*>::iterator it=strikes.begin(); it!=strikes.end(); ) {
+    if((*it)->expired) {
+      screen->circle((*it)->x, (*it)->y, (*it)->radius, blackColour);
+      delete (*it);
+      it = strikes.erase(it);
+    } else { 
+      ++it;
+    }
+   }
   
     
   screen->triangle(plane->x1, plane->y1, plane->x2, plane->y2, plane->x3, plane->y3 , whiteColour);
@@ -92,7 +102,7 @@ void Game::Delete_Outlier_Strikes() {
 
 void Game::Delete_Strikes_Targets() {
   for (std::vector<Target*>::iterator it=targets.begin(); it!=targets.end(); ) {
-    if((*it)->stricken) {
+    if((*it)->struck) {
       delete (*it);
       it = targets.erase(it);
     } else { 
@@ -100,20 +110,20 @@ void Game::Delete_Strikes_Targets() {
     }
    }
 
-   for (std::vector<Strike*>::iterator it=strikes.begin(); it!=strikes.end(); ) {
-    if((*it)->expired) {
-      delete (*it);
-      it = strikes.erase(it);
-    } else { 
-      ++it;
-    }
-   }
+//   for (std::vector<Strike*>::iterator it=strikes.begin(); it!=strikes.end(); ) {
+//    if((*it)->expired) {
+//      delete (*it);
+//      it = strikes.erase(it);
+//    } else { 
+//      ++it;
+//    }
+//   }
    
 }
 
 void Game::Color_Targets(const uint16_t color) {
   for(std::vector<Target*>::iterator it = targets.begin(); it != targets.end(); ++it) {
-    if(color != blackColour && (*it)->stricken) {
+    if(color != blackColour && (*it)->struck) {
       //means it has been hit by the strike
       screen->circle((*it)->x, (*it)->y, (*it)->radius, greenColour); 
     } else {
@@ -133,10 +143,11 @@ void Game::Color_Strikes(const uint16_t color) {
 }
 
 void Game::Detect_Strike_Hits() { 
- for(std::vector<Strike*>::iterator strike = strikes.begin(); strike != strikes.begin(); ++strike) {
-   for(std::vector<Target*>::iterator target = targets.begin(); target != targets.begin(); ++target) {
+  
+ for(std::vector<Strike*>::iterator strike = strikes.begin(); strike != strikes.end(); ++strike) {
+   for(std::vector<Target*>::iterator target = targets.begin(); target != targets.end(); ++target) {
      if( (*strike)->Hit(*target)) {
-       (*target)->stricken = true;
+       (*target)->struck = true;
        (*strike)->expired = true; 
        
      }

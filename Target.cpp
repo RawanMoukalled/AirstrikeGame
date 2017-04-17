@@ -1,3 +1,4 @@
+
 #include "Target.h"
 
 //target is going to have 2 constructors, one for loading and one for new game
@@ -14,7 +15,7 @@ void Target::Initialize_Parameters(int x, int y) {
   this->x = x;
   this->y = y;
   this->radius = 7;
-  stricken = false;  
+  struck = false;  
 }
 
 void Target::Move() {

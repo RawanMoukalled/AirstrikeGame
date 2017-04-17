@@ -18,7 +18,7 @@ class Target {
     void Move();
     bool On_Border();
     
-    bool stricken;
+    bool struck;
     int x, y, radius;
 };
 

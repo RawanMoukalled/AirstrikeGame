@@ -120,6 +120,7 @@ void ReadJoystickPressIntHandler() {
 void ReadEnterIntHandler() {
   if(display->mode == SELECTTYPE || display->mode == SELECTDIFFICULTY || display->mode == PAUSE){
     display->Read_Enter();
+    delay(100);
   }
   else if(display->mode == GAME){
     //right after loading a new game onto the screen using the enter pushbutton,
@@ -129,10 +130,11 @@ void ReadEnterIntHandler() {
       display->right_after_display = false;
     } else {
       display->game->Create_New_Strike();
+      delay(50);
     }
   }
   
-  delay(100);
+  
 }
 
 void Timer1IntHandler(void){

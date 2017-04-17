@@ -56,7 +56,6 @@ void ReadEnterIntHandler();
 void ReadJoystickPressIntHandler();
 void Timer1IntHandler(void);
 void Timer_1sec(uint16_t period0);
-void Timer_Random(uint16_t period0);
 
 
 // Add setup code
@@ -94,15 +93,13 @@ void setup() {
   attachInterrupt(Enter, ReadEnterIntHandler, FALLING);
   attachInterrupt(JoystickPress, ReadJoystickPressIntHandler, FALLING);
 
-  Timer_Random(50000);
-
+  //Timer_1sec(50000);
 }
 
 void loop() {  
-  Serial.println(random(0,118));
+  
   if(display->mode == SELECTTYPE || display->mode == SELECTDIFFICULTY || display->mode == PAUSE){
     display->Read_Joystick();
-    Serial.println("in here");
     delay(200);  
   }
 
@@ -110,6 +107,7 @@ void loop() {
     display->game->Clear_Objects();
     display->game->Increment_Object_Positions();
     display->game->Place_Objects();
+    display->game->Generation_Timer();
   }
 }
 
@@ -141,18 +139,15 @@ void Timer1IntHandler(void){
   //Required to launch next interrupt
   ROM_TimerIntClear(TIMER1_BASE, TIMER_A);
   flag_1sec +=1;
+
   if (flag_1sec == 1600){
       count_timer_1sec -=1;
+      
   }
-  loop();
+  //loop();
 }
 
-void TimerRandomIntHandler(void){
-    if(display->mode == GAME) {
-      display->game->Generation_Timer();
-    }
-    loop();
-}
+
 
 
 //Timer of 1 sec code
@@ -170,20 +165,7 @@ void Timer_1sec(uint16_t period0){
   ROM_TimerEnable(TIMER1_BASE, TIMER_A); // Start Timer 1A
 }
 
-//Timer of 1 sec code
-void Timer_Random(uint16_t period0){
-  ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_TIMER0); // Enable Timer 0 Clock
-  ROM_IntMasterEnable(); // Enable Interrupts
-  ROM_TimerConfigure(TIMER0_BASE, TIMER_CFG_PERIODIC); // Configure Timer Operation as Periodic
-  
-  // Configure Timer Frequency
-  // Frequency is given by MasterClock / CustomValue
-  ROM_TimerLoadSet(TIMER0_BASE, TIMER_A, SysCtlClockGet()/period0);
- TimerIntRegister(TIMER0_BASE, TIMER_A, &TimerRandomIntHandler);
-  ROM_IntEnable(INT_TIMER0A);  // Enable Timer 0A Interrupt
-  ROM_TimerIntEnable(TIMER0_BASE, TIMER_TIMA_TIMEOUT); // Timer 0A Interrupt when Timeout
-  ROM_TimerEnable(TIMER0_BASE, TIMER_A); // Start Timer 0A
-}
+
 
 
 

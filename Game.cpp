@@ -4,15 +4,13 @@
 Game::Game(Screen_HX8353E *screen){  
   this->screen = screen;
   plane = new Airplane();
-  target = new Target();
-
+ 
   //Timer variables
   flag_1sec = 1;
   remaining_time = 120; //in seconds
 
   flag_random = 1;
-  count_timer_random = 10; //placeholder value to be later determined
-  random_time = 1600;
+  random_time = 20;
 
   score = 0; //initialize score to 0
 }
@@ -33,61 +31,37 @@ void Game::Clear_Objects() {
 
   //clear plane
   screen->triangle(plane->x1, plane->y1, plane->x2, plane->y2, plane->x3, plane->y3 , blackColour);
-  screen->circle(target->x, target->y, target->radius, blackColour);
+  for(std::vector<Target*>::iterator it = targets.begin(); it != targets.end(); ++it) {
+      screen->circle((*it)->x, (*it)->y, (*it)->radius, blackColour); 
+  }
 
-  //CHANGE
-  //if strike goes out of the screen delete it
-//  if (strike->x != 0 and strike->y != 0)
-//  {
-//    screen->circle(strike->x, strike->y, strike->radius, blackColour);
-//  }
-  //delay(10);
+  
 }
 
 void Game::Increment_Object_Positions() {
-  plane->Move();    
-  target->Move();
+  plane->Move(); // increment plane position
+  //increment target positions
 
+  for(std::vector<Target*>::iterator it = targets.begin(); it != targets.end(); ++it) {
+    (*it)->Move();
+  }
 
-  //CHANGE move if it's still in the bound obv
-  //Move the strike
-//  if (strike->y != 20)
-//  {
-//    strike->Move();
-//  }
+  for (std::vector<Target*>::iterator its=targets.begin(); its!=targets.end(); ) 
+  {
+     if((*its)->On_Border()) 
+        its = targets.erase(its);
+    else 
+        ++its;
+   }
 
-  //CHANGE
-  //In case of collision between plane and target
-//  if (distance(target->x, target->y, plane->x1, plane->y1)  <= target->radius || distance(target->x, target->y, plane->x2, plane->y2)  <= target->radius || distance(target->x, target->y, plane->x3, plane->y3)  <= target->radius )
-//  {
-//    plane-> planeLife -=1;  //decrease plane's life
-//    Change_Plane_Color();
-//    //DELETE THE TARGET
-//    if (plane->planeLife == 0)
-//    {
-//      //GameOver    
-//    }
-//    else{
-//      Decrease_Life();  //decrease the life bar on the screen
-//    }
-//  }
-
-// if ( distance(target->x, target->y, strike->x, strike->y) <= (target->radius + strike->radius) )
-//  {
-//    score += 1;
-//    Increase_score();
-//  }
-  
-  
 }
 
 void Game::Place_Objects() {
   screen->triangle(plane->x1, plane->y1, plane->x2, plane->y2, plane->x3, plane->y3 , whiteColour);
-  screen->circle(target->x, target->y, target->radius, whiteColour);
-//  if (strike->x != 0 and strike->y != 0)
-//  {
-//    screen->circle(strike->x, strike->y, strike->radius, yellowColour);
-//  }
+  for(std::vector<Target*>::iterator it = targets.begin(); it != targets.end(); ++it) {
+      screen->circle((*it)->x, (*it)->y, (*it)->radius, whiteColour); 
+  }
+  
   delay(100);
 }
 
@@ -145,13 +119,13 @@ void Game::Hard_Timer() {
 }
 
 void Game::Generation_Timer() {
-   //Required to launch next interrupt
-  ROM_TimerIntClear(TIMER0_BASE, TIMER_A);
-  flag_random +=1;
+  flag_random +=1;   
   if (flag_random == random_time){
-      count_timer_random -=1;
-      random_time = random(1600, 8000);
-      
+    flag_random = 1;
+    random_time = random(5, 20);
+    targets.push_back(new Target);
+    Serial.print("targets size: ");
+    Serial.println(targets.size());   
   } 
 }
 

@@ -4,6 +4,7 @@
 
 Display::Display() {
   screen  = &(Display::screen_main);  
+  game = new Game(screen);
   
   tm1637 = new TM1637(39, 38);   
   tm1637->init();
@@ -72,7 +73,7 @@ void Display::Read_Joystick() {
   //convert from input to output range, Y goes from 0 to 128 top to bottom of the screen
   jsX = map(analogRead(joystickX), 0, 4096, 0, 128);
   jsY = map(analogRead(joystickY), 0, 4096, 128, 0);
-  Serial.println("hellooo");
+
   
   //joystick was moved down
   if( jsY > 90) {
@@ -117,10 +118,12 @@ void Display::Display_Paused_Game() {
 void Display::Display_New_Page(uint16_t y) {
   
   if(mode == SELECTTYPE){
+    //new game
     if(y == 50){
-      
       Display_Select_Difficulty();
-    }else if(y == 70) {
+    }
+    //load game
+    else if(y == 70) {
       //Display_Load_Game();
     }
   } 
@@ -129,10 +132,8 @@ void Display::Display_New_Page(uint16_t y) {
     //easy mode
     if(y == 50){
       right_after_display = true;
-      game = new Game(screen);
       mode = GAME;
       game->Display_Game();
-     
     } 
     //hard mode
     else if(y == 70) {

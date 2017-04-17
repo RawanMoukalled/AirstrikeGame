@@ -16,6 +16,16 @@ void Airplane::Initialize_Parameters() {
   planeLifeX = 115; //location of the life (keep track of the life)
 }
 
+void Airplane::Load_Parameters(int x1, int y1, int x2, int y2, int x3, int y3, int currX) {
+  this->x1 = x1;
+  this->y1 = y1;
+  this->x2 = x2;
+  this->y2 = y2;
+  this->x3 = x3;
+  this->y3 = y3;
+  this->currX = currX; // initialize x axis position as straight horizontal
+}
+
 //read accelerometer values and decide whether to move left or right
 void Airplane::Move() {
   

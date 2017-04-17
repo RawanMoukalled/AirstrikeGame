@@ -19,6 +19,7 @@
 #include <Terminal8e.h>
 //#include "TM1637.h"
 
+#include <list>
 #include <vector>
 #include "Airplane.h"
 #include "Target.h"
@@ -58,8 +59,7 @@ class Game {
     
     Screen_HX8353E *screen;
     Airplane * plane;
-    //std::vector<Target*> targets;
-    Target * target;
+    std::vector<Target*> targets;
     std::vector<Obstacle*> obstacles;
     
     int score;
@@ -72,7 +72,6 @@ class Game {
 
     //obstacle and target generation timer variables
     volatile uint16_t flag_random; 
-    volatile uint16_t count_timer_random;
     int random_time; //randomizes the times in which a new obstacle or target are created
 
     

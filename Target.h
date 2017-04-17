@@ -12,9 +12,12 @@
 
 class Target {
   public: 
-    Target();
+    Target(); //default constructor for new creation
+    Target(int x, int y, int radius); //constructor for loaded games (premade target)
     void Initialize_Parameters(int x, int y, int radius);
     void Move();
+    bool On_Border();
+    
     int x, y, radius;
 };
 

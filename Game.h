@@ -17,9 +17,7 @@
 #include <Terminal12e.h>
 #include <Terminal6e.h>
 #include <Terminal8e.h>
-//#include "TM1637.h"
 
-#include <list>
 #include <vector>
 #include "Airplane.h"
 #include "Target.h"
@@ -40,15 +38,23 @@ class Game {
     void Clear_Objects();
     void Increment_Object_Positions();
     void Place_Objects();
-    //void Create_New_Strike();
-
+    void Create_New_Strike();
     void Initialize_Life();
     void Initialize_Score();
     void Increase_score();
     void Start_Timer_1sec();
     void Decrease_Life();
-    void Change_Plane_Color(); //When a collision happens between the airplane and a target/obstacle, change the plane's color to red
-
+    void Change_Plane_Color(); 
+    void Delete_Outlier_Targets();
+    void Delete_Outlier_Obstacles();
+    void Delete_Outlier_Strikes();
+    void Delete_Strikes_Targets();
+    void Color_Targets(const uint16_t color);
+    void Color_Obstacles(const uint16_t color);
+    void Color_Strikes(const uint16_t color);
+    void Detect_Strike_Hits();
+    
+    
     double distance(int x1, int y1, int x2, int y2);
 
     //hard timer handler
@@ -61,6 +67,7 @@ class Game {
     Airplane * plane;
     std::vector<Target*> targets;
     std::vector<Obstacle*> obstacles;
+    std::vector<Strike*> strikes;
     
     int score;
     
@@ -74,7 +81,6 @@ class Game {
     volatile uint16_t flag_random; 
     int random_time; //randomizes the times in which a new obstacle or target are created
 
-    
 };
 
 #endif

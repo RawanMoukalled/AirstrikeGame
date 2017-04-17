@@ -31,38 +31,117 @@ void Game::Clear_Objects() {
 
   //clear plane
   screen->triangle(plane->x1, plane->y1, plane->x2, plane->y2, plane->x3, plane->y3 , blackColour);
-  for(std::vector<Target*>::iterator it = targets.begin(); it != targets.end(); ++it) {
-      screen->circle((*it)->x, (*it)->y, (*it)->radius, blackColour); 
-  }
-
-  
+  Color_Targets(blackColour);
+  Color_Strikes(blackColour);
+  //Delete_Strikes_Targets();
 }
 
 void Game::Increment_Object_Positions() {
   plane->Move(); // increment plane position
+  
   //increment target positions
-
   for(std::vector<Target*>::iterator it = targets.begin(); it != targets.end(); ++it) {
     (*it)->Move();
   }
+  
+  //increment strikes positions
+  for(std::vector<Strike*>::iterator it = strikes.begin(); it != strikes.end(); ++it) {
+    (*it)->Move();
+  }
 
-  for (std::vector<Target*>::iterator its=targets.begin(); its!=targets.end(); ) 
-  {
-     if((*its)->On_Border()) 
-        its = targets.erase(its);
-    else 
-        ++its;
-   }
-
+  Delete_Outlier_Targets();
+  Delete_Outlier_Strikes();
 }
 
 void Game::Place_Objects() {
-  screen->triangle(plane->x1, plane->y1, plane->x2, plane->y2, plane->x3, plane->y3 , whiteColour);
-  for(std::vector<Target*>::iterator it = targets.begin(); it != targets.end(); ++it) {
-      screen->circle((*it)->x, (*it)->y, (*it)->radius, whiteColour); 
-  }
+    
+  Detect_Strike_Hits();
   
+    
+  screen->triangle(plane->x1, plane->y1, plane->x2, plane->y2, plane->x3, plane->y3 , whiteColour);
+  Color_Targets(whiteColour);
+  Color_Strikes(yellowColour);
   delay(100);
+}
+
+void Game::Delete_Outlier_Targets() {
+    for (std::vector<Target*>::iterator it=targets.begin(); it!=targets.end(); ) {
+     if((*it)->On_Border()) {
+        delete (*it);
+        it = targets.erase(it);
+     } else { 
+        ++it;
+     }
+   }
+}
+
+void Game::Delete_Outlier_Obstacles() {
+  
+}
+
+void Game::Delete_Outlier_Strikes() {
+  for (std::vector<Strike*>::iterator it=strikes.begin(); it!=strikes.end(); ) {
+    if((*it)->On_Border()) {
+      delete (*it);
+      it = strikes.erase(it);
+    } else { 
+      ++it;
+    }
+   }
+}
+
+void Game::Delete_Strikes_Targets() {
+  for (std::vector<Target*>::iterator it=targets.begin(); it!=targets.end(); ) {
+    if((*it)->stricken) {
+      delete (*it);
+      it = targets.erase(it);
+    } else { 
+      ++it;
+    }
+   }
+
+   for (std::vector<Strike*>::iterator it=strikes.begin(); it!=strikes.end(); ) {
+    if((*it)->expired) {
+      delete (*it);
+      it = strikes.erase(it);
+    } else { 
+      ++it;
+    }
+   }
+   
+}
+
+void Game::Color_Targets(const uint16_t color) {
+  for(std::vector<Target*>::iterator it = targets.begin(); it != targets.end(); ++it) {
+    if(color != blackColour && (*it)->stricken) {
+      //means it has been hit by the strike
+      screen->circle((*it)->x, (*it)->y, (*it)->radius, greenColour); 
+    } else {
+      screen->circle((*it)->x, (*it)->y, (*it)->radius, color);
+    }
+  }
+}
+
+void Game::Color_Obstacles(const uint16_t color) {
+  
+}
+
+void Game::Color_Strikes(const uint16_t color) {
+  for(std::vector<Strike*>::iterator it = strikes.begin(); it != strikes.end(); ++it) {
+    screen->circle((*it)->x, (*it)->y, (*it)->radius, color); 
+  }
+}
+
+void Game::Detect_Strike_Hits() { 
+ for(std::vector<Strike*>::iterator strike = strikes.begin(); strike != strikes.begin(); ++strike) {
+   for(std::vector<Target*>::iterator target = targets.begin(); target != targets.begin(); ++target) {
+     if( (*strike)->Hit(*target)) {
+       (*target)->stricken = true;
+       (*strike)->expired = true; 
+       
+     }
+   }
+ }
 }
 
 //Initialize Airplane Life on screen
@@ -78,12 +157,6 @@ void Game::Initialize_Score(){
   screen->gText(50, 5, String(score));
 }
 
-//Create a new strike target and store its values here
-//void Game::Create_New_Strike(){
-//  strike->x = plane->x2;
-//  strike->y = plane->y2-5;
-//  screen->circle(strike->x, strike->y, strike->radius, yellowColour);  
-//}
 
 void Game::Initialize_Objects() {
 //  plane->Initialize_Parameters();
@@ -123,10 +196,12 @@ void Game::Generation_Timer() {
   if (flag_random == random_time){
     flag_random = 1;
     random_time = random(5, 20);
-    targets.push_back(new Target);
-    Serial.print("targets size: ");
-    Serial.println(targets.size());   
+    targets.push_back(new Target);   
   } 
 }
 
+void Game::Create_New_Strike() {
+  strikes.push_back(new Strike(plane->x2, plane->y2 - 5));
+  Color_Strikes(yellowColour);
+}
 

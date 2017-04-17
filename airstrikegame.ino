@@ -128,7 +128,7 @@ void ReadEnterIntHandler() {
     if(display->right_after_display) {
       display->right_after_display = false;
     } else {
-      //display->game->Create_New_Strike();
+      display->game->Create_New_Strike();
     }
   }
   

@@ -11,12 +11,18 @@
 #include <SPI.h>
 
 #include "Airplane.h"
+#include "Target.h"
+#include <cmath>
 
 class Strike {
   public: 
-    Strike();
-    void Initialize_Parameters();
+    Strike(int x, int y);
+    void Initialize_Parameters(int x, int y);
     void Move();
+    bool On_Border();
+    bool Hit(Target *t);
+    bool expired; //it already hit a target, should be deleted
+    
     int x, y, radius;
     Airplane *airplane;
 };

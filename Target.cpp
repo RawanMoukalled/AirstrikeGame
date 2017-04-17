@@ -4,16 +4,17 @@
 
 //new game target constructor
 Target::Target() {
-  Initialize_Parameters(random(10,118), 24, 7);
+  Initialize_Parameters(random(10,118), 24);
 }
 
-Target::Target(int x, int y, int radius) {
-  Initialize_Parameters(x, y, radius);
+Target::Target(int x, int y) {
+  Initialize_Parameters(x, y);
 }
-void Target::Initialize_Parameters(int x, int y, int radius) {
+void Target::Initialize_Parameters(int x, int y) {
   this->x = x;
   this->y = y;
-  this->radius = radius; 
+  this->radius = 7;
+  stricken = false;  
 }
 
 void Target::Move() {
@@ -28,5 +29,4 @@ bool Target::On_Border() {
     return false;
   }
 }
-
 

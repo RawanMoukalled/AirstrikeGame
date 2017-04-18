@@ -33,7 +33,8 @@ void Game::Clear_Objects() {
   screen->triangle(plane->x1, plane->y1, plane->x2, plane->y2, plane->x3, plane->y3 , blackColour);
   Color_Targets(blackColour);
   Color_Strikes(blackColour);
-  Delete_Strikes_Targets();
+  Color_Obstacles(blackColour);
+  Delete_Struck_Targets();
 }
 
 void Game::Increment_Object_Positions() {
@@ -49,28 +50,26 @@ void Game::Increment_Object_Positions() {
     (*it)->Move();
   }
 
+  //increment obstacles positions
+  for(std::vector<Obstacle*>::iterator it = obstacles.begin(); it != obstacles.end(); ++it) {
+    (*it)->Move();
+  }
+
   Delete_Outlier_Targets();
   Delete_Outlier_Strikes();
+  Delete_Outlier_Obstacles();
 }
 
 void Game::Place_Objects() {
     
-  Detect_Strike_Hits();
+  Detect_Strike_Hits();    
+  Delete_Expired_Strikes();
 
-   for (std::vector<Strike*>::iterator it=strikes.begin(); it!=strikes.end(); ) {
-    if((*it)->expired) {
-      screen->circle((*it)->x, (*it)->y, (*it)->radius, blackColour);
-      delete (*it);
-      it = strikes.erase(it);
-    } else { 
-      ++it;
-    }
-   }
-  
-    
+  //draw plane
   screen->triangle(plane->x1, plane->y1, plane->x2, plane->y2, plane->x3, plane->y3 , whiteColour);
   Color_Targets(whiteColour);
   Color_Strikes(yellowColour);
+  Color_Obstacles(whiteColour);
   delay(100);
 }
 
@@ -86,7 +85,14 @@ void Game::Delete_Outlier_Targets() {
 }
 
 void Game::Delete_Outlier_Obstacles() {
-  
+    for (std::vector<Obstacle*>::iterator it=obstacles.begin(); it!=obstacles.end(); ) {
+     if((*it)->On_Border()) {
+        delete (*it);
+        it = obstacles.erase(it);
+     } else { 
+        ++it;
+     }
+   }  
 }
 
 void Game::Delete_Outlier_Strikes() {
@@ -100,7 +106,7 @@ void Game::Delete_Outlier_Strikes() {
    }
 }
 
-void Game::Delete_Strikes_Targets() {
+void Game::Delete_Struck_Targets() {
   for (std::vector<Target*>::iterator it=targets.begin(); it!=targets.end(); ) {
     if((*it)->struck) {
       delete (*it);
@@ -121,6 +127,18 @@ void Game::Delete_Strikes_Targets() {
    
 }
 
+void Game::Delete_Expired_Strikes() {
+     for (std::vector<Strike*>::iterator it=strikes.begin(); it!=strikes.end(); ) {
+    if((*it)->expired) {
+      screen->circle((*it)->x, (*it)->y, (*it)->radius, blackColour);
+      delete (*it);
+      it = strikes.erase(it);
+    } else { 
+      ++it;
+    }
+   }
+}
+
 void Game::Color_Targets(const uint16_t color) {
   for(std::vector<Target*>::iterator it = targets.begin(); it != targets.end(); ++it) {
     if(color != blackColour && (*it)->struck) {
@@ -133,7 +151,14 @@ void Game::Color_Targets(const uint16_t color) {
 }
 
 void Game::Color_Obstacles(const uint16_t color) {
-  
+    for(std::vector<Obstacle*>::iterator it = obstacles.begin(); it != obstacles.end(); ++it) {
+    //if(color != blackColour && (*it)->struck) {
+      //means it has been hit by the strike
+      //screen->dRectangle((*it)->x, (*it)->y, (*it)->radius, greenColour); 
+    //} else {
+      screen->dRectangle((*it)->x, (*it)->y, (*it)->len, (*it)->len, color);
+    //}
+  }  
 }
 
 void Game::Color_Strikes(const uint16_t color) {
@@ -198,16 +223,18 @@ double Game::distance(int x1, int y1, int x2, int y2) {
   return sqrt( (x1-x2)*(x1-x2) + (y1-y2)*(y1-y2) );
 }
 
-void Game::Hard_Timer() {
-  
-}
 
 void Game::Generation_Timer() {
   flag_random +=1;   
   if (flag_random == random_time){
     flag_random = 1;
     random_time = random(5, 20);
-    targets.push_back(new Target);   
+    int object_type = random(0,2);
+    if(object_type == 0){
+      targets.push_back(new Target(plane));
+    } else {
+      obstacles.push_back(new Obstacle);  
+    }
   } 
 }
 
@@ -216,3 +243,6 @@ void Game::Create_New_Strike() {
   Color_Strikes(yellowColour);
 }
 
+void Game::Hard_Timer() {
+  
+}

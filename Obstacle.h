@@ -12,11 +12,14 @@
 
 class Obstacle {
   public: 
-    Obstacle(int x, int y);
-    void Initialize_Parameters(int x, int y);
+    Obstacle();
+    Obstacle(int x, int y, int len);
+    void Initialize_Parameters(int x, int y, int len);
     void Move();
+    bool On_Border();
 
     int x, y;
+    int len;
     
 };
 

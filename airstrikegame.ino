@@ -97,7 +97,7 @@ void setup() {
 }
 
 void loop() {  
-  
+  Serial.println((int)analogRead(23));
   if(display->mode == SELECTTYPE || display->mode == SELECTDIFFICULTY || display->mode == PAUSE){
     display->Read_Joystick();
     delay(200);  
@@ -130,7 +130,7 @@ void ReadEnterIntHandler() {
       display->right_after_display = false;
     } else {
       display->game->Create_New_Strike();
-      delay(50);
+      delay(100);
     }
   }
   

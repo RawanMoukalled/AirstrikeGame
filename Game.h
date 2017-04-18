@@ -48,7 +48,8 @@ class Game {
     void Delete_Outlier_Targets();
     void Delete_Outlier_Obstacles();
     void Delete_Outlier_Strikes();
-    void Delete_Strikes_Targets();
+    void Delete_Struck_Targets();
+    void Delete_Expired_Strikes();
     void Color_Targets(const uint16_t color);
     void Color_Obstacles(const uint16_t color);
     void Color_Strikes(const uint16_t color);

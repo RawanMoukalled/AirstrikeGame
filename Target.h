@@ -9,17 +9,19 @@
 
 // Following includes for Energia only
 #include <SPI.h>
+#include "Airplane.h"
 
 class Target {
   public: 
-    Target(); //default constructor for new creation
-    Target(int x, int y); //constructor for loaded games (premade target)
+    Target(Airplane *plane); //default constructor for new creation
+    Target(int x, int y, Airplane *plane); //constructor for loaded games (premade target)
     void Initialize_Parameters(int x, int y);
     void Move();
     bool On_Border();
     
     bool struck;
     int x, y, radius;
+    Airplane *plane;
 };
 
 #endif

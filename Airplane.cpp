@@ -11,6 +11,7 @@ void Airplane::Initialize_Parameters() {
   y2 = 115;
   x3 = 70;
   y3 = 128;
+  collided = false;
   currX = 1400; // initialize x axis position as straight horizontal
   planeLife = 3;
   planeLifeX = 115; //location of the life (keep track of the life)
@@ -33,12 +34,12 @@ void Airplane::Move() {
   prevX = currX;
   currX = (int)analogRead(xAxisPin);
   
-  if(currX < 1090) {
-    currX = 1090;
-  } else if(currX > 1800) {
-    currX = 1800;
+  if(currX < 1700) {
+    currX = 1700;
+  } else if(currX > 2350) {
+    currX = 2350;
   }
-  currX = map(currX, 1090, 1800, 0, 128);
+  currX = map(currX, 1700, 2350, 0, 128);
   Change_Points((currX-prevX));  
   
 }
@@ -55,9 +56,5 @@ void Airplane::Change_Points(int delta) {
   }
 }
 
-////check the airplane Life
-//void Airplane::Plane_Life(){
-//  planeLife -=1;
-//}
 
 

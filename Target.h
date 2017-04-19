@@ -13,15 +13,14 @@
 
 class Target {
   public: 
-    Target(Airplane *plane); //default constructor for new creation
-    Target(int x, int y, Airplane *plane); //constructor for loaded games (premade target)
+    Target(); //default constructor for new creation
+    Target(int x, int y); //constructor for loaded games (premade target)
     void Initialize_Parameters(int x, int y);
     void Move();
-    bool On_Border();
+    bool On_Border(Airplane *plane);
     
     bool struck;
     int x, y, radius;
-    Airplane *plane;
 };
 
 #endif

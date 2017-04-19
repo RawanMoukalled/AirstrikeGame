@@ -35,33 +35,37 @@ class Game {
     Game(Screen_HX8353E *screen);
     void Initialize_Objects();
     void Display_Game();
+    
     void Clear_Objects();
     void Increment_Object_Positions();
     void Place_Objects();
+    
     void Create_New_Strike();
+    
     void Initialize_Life();
-    void Initialize_Score();
+    void Display_Score();
+    
     void Increase_score();
-    void Start_Timer_1sec();
     void Decrease_Life();
-    void Change_Plane_Color(); 
+    
     void Delete_Outlier_Targets();
     void Delete_Outlier_Obstacles();
     void Delete_Outlier_Strikes();
     void Delete_Struck_Targets();
     void Delete_Expired_Strikes();
+    
     void Color_Targets(const uint16_t color);
     void Color_Obstacles(const uint16_t color);
     void Color_Strikes(const uint16_t color);
+    void Color_Plane(const uint16_t color);
+    
     void Detect_Strike_Hits();
     
-    
-    double distance(int x1, int y1, int x2, int y2);
-
-    //hard timer handler
+    //hard timer 
     void Hard_Timer();
-
-    //generation timer handler
+    void Start_Timer_1sec();
+    
+    //generation pseudo-timer handler
     void Generation_Timer();
     
     Screen_HX8353E *screen;
@@ -69,11 +73,8 @@ class Game {
     std::vector<Target*> targets;
     std::vector<Obstacle*> obstacles;
     std::vector<Strike*> strikes;
-    
     int score;
     
-    //Strike *strike;
-
     //hard timer variables
     volatile uint16_t flag_1sec; 
     volatile uint8_t remaining_time;

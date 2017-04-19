@@ -97,7 +97,6 @@ void setup() {
 }
 
 void loop() {  
-  Serial.println((int)analogRead(23));
   if(display->mode == SELECTTYPE || display->mode == SELECTDIFFICULTY || display->mode == PAUSE){
     display->Read_Joystick();
     delay(200);  

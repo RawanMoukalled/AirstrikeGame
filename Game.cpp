@@ -20,17 +20,18 @@ void Game::Display_Game() {
   screen->setFontSolid(false);
   screen->setFontSize(1);
   screen->setPenSolid(true);
+  screen->gText(1, 5, "Score:");
   Place_Objects();  
   //CHANGE
   Initialize_Life(); //Initialize Life
-  Initialize_Score(); //Initialize score on Screen
+  Display_Score(); //Initialize score on Screen
 }
 
 void Game::Clear_Objects() {
   screen->setPenSolid(true);
 
   //clear plane
-  screen->triangle(plane->x1, plane->y1, plane->x2, plane->y2, plane->x3, plane->y3 , blackColour);
+  Color_Plane(blackColour);
   Color_Targets(blackColour);
   Color_Strikes(blackColour);
   Color_Obstacles(blackColour);
@@ -52,7 +53,7 @@ void Game::Increment_Object_Positions() {
 
   //increment obstacles positions
   for(std::vector<Obstacle*>::iterator it = obstacles.begin(); it != obstacles.end(); ++it) {
-    (*it)->Move();
+    (*it)->Move(plane);
   }
 
   Delete_Outlier_Targets();
@@ -65,8 +66,13 @@ void Game::Place_Objects() {
   Detect_Strike_Hits();    
   Delete_Expired_Strikes();
 
-  //draw plane
-  screen->triangle(plane->x1, plane->y1, plane->x2, plane->y2, plane->x3, plane->y3 , whiteColour);
+  if(plane->collided){
+    Color_Plane(redColour);
+    plane->collided = false;
+  } else {
+    Color_Plane(whiteColour);
+  }
+  
   Color_Targets(whiteColour);
   Color_Strikes(yellowColour);
   Color_Obstacles(whiteColour);
@@ -75,7 +81,7 @@ void Game::Place_Objects() {
 
 void Game::Delete_Outlier_Targets() {
     for (std::vector<Target*>::iterator it=targets.begin(); it!=targets.end(); ) {
-     if((*it)->On_Border()) {
+     if((*it)->On_Border(plane)) {
         delete (*it);
         it = targets.erase(it);
      } else { 
@@ -111,20 +117,12 @@ void Game::Delete_Struck_Targets() {
     if((*it)->struck) {
       delete (*it);
       it = targets.erase(it);
+      score += 10;
+      Display_Score(); 
     } else { 
       ++it;
     }
    }
-
-//   for (std::vector<Strike*>::iterator it=strikes.begin(); it!=strikes.end(); ) {
-//    if((*it)->expired) {
-//      delete (*it);
-//      it = strikes.erase(it);
-//    } else { 
-//      ++it;
-//    }
-//   }
-   
 }
 
 void Game::Delete_Expired_Strikes() {
@@ -156,7 +154,7 @@ void Game::Color_Obstacles(const uint16_t color) {
       //means it has been hit by the strike
       //screen->dRectangle((*it)->x, (*it)->y, (*it)->radius, greenColour); 
     //} else {
-      screen->dRectangle((*it)->x, (*it)->y, (*it)->len, (*it)->len, color);
+      screen->rectangle((*it)->x1, (*it)->y1, (*it)->x2, (*it)->y2, color);
     //}
   }  
 }
@@ -167,13 +165,16 @@ void Game::Color_Strikes(const uint16_t color) {
   }
 }
 
+void Game::Color_Plane(const uint16_t color) {
+  screen->triangle(plane->x1, plane->y1, plane->x2, plane->y2, plane->x3, plane->y3 , color);
+}
+
 void Game::Detect_Strike_Hits() { 
-  
  for(std::vector<Strike*>::iterator strike = strikes.begin(); strike != strikes.end(); ++strike) {
    for(std::vector<Target*>::iterator target = targets.begin(); target != targets.end(); ++target) {
      if( (*strike)->Hit(*target)) {
        (*target)->struck = true;
-       (*strike)->expired = true; 
+       (*strike)->expired = true;
        
      }
    }
@@ -183,13 +184,12 @@ void Game::Detect_Strike_Hits() {
 //Initialize Airplane Life on screen
 void Game::Initialize_Life(){
   screen->dRectangle(115,5,10,10,greenColour);
-  screen->dRectangle(105,5,10,10,yellowColour);
   screen->dRectangle(95,5,10,10,redColour);
 }
 
 //Initialize Game score
-void Game::Initialize_Score(){
-  screen->gText(1, 5, "Score:");
+void Game::Display_Score(){ 
+  screen->dRectangle(50,5,30,10,blackColour);
   screen->gText(50, 5, String(score));
 }
 
@@ -201,7 +201,7 @@ void Game::Initialize_Objects() {
 
 //Decrease the Life on the screen
 void Game::Decrease_Life(){
-  screen->dRectangle(plane->planeLifeX,5,10,10,blackColour);
+  screen->dRectangle(plane->planeLifeX, 5, 10, 10, blackColour);
   plane->planeLifeX -= 10;
 }
 
@@ -211,19 +211,6 @@ void Game::Increase_score(){
   screen->gText(50,5,String(score));
 }
 
-
-//in case of collision with target
-void Game::Change_Plane_Color(){
-  screen->triangle(plane->x1, plane->y1, plane->x2, plane->y2, plane->x3, plane->y3 , redColour);
-  delay(200);
-  screen->triangle(plane->x1, plane->y1, plane->x2, plane->y2, plane->x3, plane->y3 , whiteColour);
-}   
-
-double Game::distance(int x1, int y1, int x2, int y2) {
-  return sqrt( (x1-x2)*(x1-x2) + (y1-y2)*(y1-y2) );
-}
-
-
 void Game::Generation_Timer() {
   flag_random +=1;   
   if (flag_random == random_time){
@@ -231,9 +218,9 @@ void Game::Generation_Timer() {
     random_time = random(5, 20);
     int object_type = random(0,2);
     if(object_type == 0){
-      targets.push_back(new Target(plane));
+      targets.push_back(new Target());
     } else {
-      obstacles.push_back(new Obstacle);  
+      obstacles.push_back(new Obstacle());  
     }
   } 
 }

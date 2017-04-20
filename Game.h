@@ -23,17 +23,22 @@
 #include "Target.h"
 #include "Obstacle.h"
 #include "Strike.h"
+//#include "Display.h"
 
 #include "driverlib/rom.h"
 #include "driverlib/interrupt.h"
 #include "driverlib/sysctl.h"
 #include "driverlib/timer.h"
 
+// Which mode of the game we are at
+enum level_t {
+  EASY, HARD, NONE
+}; // main mode to be used 
 
 class Game {
   public:
     Game(Screen_HX8353E *screen);
-    void Initialize_Objects();
+    void Initialize_Game();
     void Display_Game();
     
     void Clear_Objects();
@@ -42,7 +47,7 @@ class Game {
     
     void Create_New_Strike();
     
-    void Initialize_Life();
+    void Draw_Life();
     void Display_Score();
     
     void Increase_score();
@@ -53,6 +58,7 @@ class Game {
     void Delete_Outlier_Strikes();
     void Delete_Struck_Targets();
     void Delete_Expired_Strikes();
+    void Delete_All_Objects();
     
     void Color_Targets(const uint16_t color);
     void Color_Obstacles(const uint16_t color);
@@ -60,6 +66,9 @@ class Game {
     void Color_Plane(const uint16_t color);
     
     void Detect_Strike_Hits();
+
+    void Increment_Timer_Flag();
+    void Decrease_Remaining_Time();
     
     //hard timer 
     void Hard_Timer();
@@ -74,6 +83,10 @@ class Game {
     std::vector<Obstacle*> obstacles;
     std::vector<Strike*> strikes;
     int score;
+    int life;
+    int lifePos;
+    bool new_strike;
+    level_t level;
     
     //hard timer variables
     volatile uint16_t flag_1sec; 
@@ -82,7 +95,6 @@ class Game {
     //obstacle and target generation timer variables
     volatile uint16_t flag_random; 
     int random_time; //randomizes the times in which a new obstacle or target are created
-
 };
 
 #endif

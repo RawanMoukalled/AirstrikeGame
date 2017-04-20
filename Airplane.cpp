@@ -13,8 +13,6 @@ void Airplane::Initialize_Parameters() {
   y3 = 128;
   collided = false;
   currX = 1400; // initialize x axis position as straight horizontal
-  planeLife = 3;
-  planeLifeX = 115; //location of the life (keep track of the life)
 }
 
 void Airplane::Load_Parameters(int x1, int y1, int x2, int y2, int x3, int y3, int currX) {

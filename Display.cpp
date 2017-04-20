@@ -10,11 +10,12 @@ Display::Display() {
   tm1637->init();
   tm1637->set(BRIGHT_TYPICAL);
 
-  Set_7Seg(9999);
+  Display::Set_7Seg(0);
 
   right_after_display = true;
 }
- 
+
+TM1637* Display::tm1637;
 
 // Display Airstrike Game 
 void Display::Initialize_Screen(){
@@ -151,7 +152,8 @@ void Display::Display_New_Page(uint16_t y) {
     if(y == 50) {
       //restore game objects to initial state in case of
       //future new game 
-      game->Initialize_Objects();
+      game->Initialize_Game();
+      game->Delete_All_Objects();
       Display_Select_Type();
     }
 
@@ -159,7 +161,8 @@ void Display::Display_New_Page(uint16_t y) {
     else if(y == 70) {
       //restore game objects to initial state in case of
       //future new game 
-      game->Initialize_Objects();
+      game->Initialize_Game();
+      game->Delete_All_Objects();
       Display_Select_Type();
     }
 
@@ -184,10 +187,17 @@ void Display::Read_Enter() {
 }
 
 void Display::Set_7Seg(int num) {
-   tm1637->display(0,(num/1000)%10);
-   tm1637->display(1,(num/100)%10);
-   tm1637->display(2,(num/10)%10);
-   tm1637->display(3,num%10);
+   int seconds = num%60; 
+   int mins = num/60;
+    
+   
+   //tm1637->display(0,(num/1000)%10);
+   //tm1637->display(1,(num/100)%10);
+   tm1637->display(1, mins);
+   
+   tm1637->display(2,(seconds/10)%10);
+   tm1637->display(3,seconds%10);
+   
 }
 
 

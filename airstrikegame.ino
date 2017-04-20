@@ -48,9 +48,6 @@ Display * display;
 volatile uint16_t flag_1sec = 1; 
 volatile uint8_t count_timer_1sec = 100;
 
-volatile uint16_t flag_random = 1; 
-volatile uint16_t count_timer_random = 1000;
-
 //Prototypes
 void ReadEnterIntHandler();
 void ReadJoystickPressIntHandler();
@@ -93,7 +90,7 @@ void setup() {
   attachInterrupt(Enter, ReadEnterIntHandler, FALLING);
   attachInterrupt(JoystickPress, ReadJoystickPressIntHandler, FALLING);
 
-  //Timer_1sec(50000);
+  Timer_1sec(50000);
 }
 
 void loop() {  
@@ -128,28 +125,26 @@ void ReadEnterIntHandler() {
     if(display->right_after_display) {
       display->right_after_display = false;
     } else {
-      display->game->Create_New_Strike();
+      //display->game->Create_New_Strike();
+      display->game->new_strike = true;
       delay(100);
     }
-  }
-  
-  
+  } 
 }
 
 void Timer1IntHandler(void){
   //Required to launch next interrupt
   ROM_TimerIntClear(TIMER1_BASE, TIMER_A);
-  flag_1sec +=1;
-
-  if (flag_1sec == 1600){
-      count_timer_1sec -=1;
-      
+  if(display->mode == GAME && display->game->level == HARD) {
+    display->game->Increment_Timer_Flag();
+  
+    if (display->game->flag_1sec == 450){
+      display->game->Decrease_Remaining_Time();
+      //Serial.println(display->game->remaining_time);
+      Display::Set_7Seg(display->game->remaining_time);
+    }
   }
-  //loop();
 }
-
-
-
 
 //Timer of 1 sec code
 void Timer_1sec(uint16_t period0){
@@ -165,9 +160,4 @@ void Timer_1sec(uint16_t period0){
   ROM_TimerIntEnable(TIMER1_BASE, TIMER_TIMA_TIMEOUT); // Timer 1A Interrupt when Timeout
   ROM_TimerEnable(TIMER1_BASE, TIMER_A); // Start Timer 1A
 }
-
-
-
-
-
 

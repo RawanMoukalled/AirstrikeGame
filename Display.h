@@ -50,14 +50,14 @@ class Display {
     void Display_New_Page(uint16_t y);
     void Read_Enter();
     void Display_Paused_Game();
-    void Set_7Seg(int num);
+    static void Set_7Seg(int num);
 
     screen_mode_t mode;
     uint16_t jsX, jsY, arrowX, arrowY; //current positions of the joystick and arrow 
 
     Screen_HX8353E screen_main; 
     Screen_HX8353E *screen;//pointer to the screen
-    TM1637 *tm1637;       
+    static TM1637 *tm1637;       
     Game * game;
 
     bool right_after_display; 

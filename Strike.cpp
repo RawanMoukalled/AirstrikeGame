@@ -24,14 +24,12 @@ bool Strike::On_Border() {
 }
 
 bool Strike::Hit(Target *t) {
-   Serial.println("entered function");
   bool hit = false;
   double distance = sqrt( (x - t->x)*(x - t->x) + (y - t->y)*(y - t->y)  );
   if(distance <= (radius + t->radius) ) {
     hit = true;
   }
-   Serial.println("exited function");
-      
+  
   return hit;
 }
 

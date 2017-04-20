@@ -1,18 +1,27 @@
 #include "Game.h"
+#include "Display.h"
 #include <cmath>
 
 Game::Game(Screen_HX8353E *screen){  
   this->screen = screen;
   plane = new Airplane();
- 
+  Initialize_Game();
+}
+
+void Game::Initialize_Game() {
   //Timer variables
   flag_1sec = 1;
-  remaining_time = 120; //in seconds
+  remaining_time = 150; //in seconds
 
   flag_random = 1;
   random_time = 20;
 
   score = 0; //initialize score to 0
+  life = 3; 
+  lifePos = 115;
+
+  new_strike = false;
+  level = HARD;
 }
 
 void Game::Display_Game() {
@@ -23,8 +32,9 @@ void Game::Display_Game() {
   screen->gText(1, 5, "Score:");
   Place_Objects();  
   //CHANGE
-  Initialize_Life(); //Initialize Life
+  Draw_Life(); //Initialize Life
   Display_Score(); //Initialize score on Screen
+  Display::Set_7Seg(remaining_time);
 }
 
 void Game::Clear_Objects() {
@@ -69,9 +79,15 @@ void Game::Place_Objects() {
   if(plane->collided){
     Color_Plane(redColour);
     plane->collided = false;
+    Decrease_Life();
   } else {
     Color_Plane(whiteColour);
   }
+
+  if(new_strike) {
+    Create_New_Strike();
+    new_strike = false;
+  } 
   
   Color_Targets(whiteColour);
   Color_Strikes(yellowColour);
@@ -126,7 +142,7 @@ void Game::Delete_Struck_Targets() {
 }
 
 void Game::Delete_Expired_Strikes() {
-     for (std::vector<Strike*>::iterator it=strikes.begin(); it!=strikes.end(); ) {
+   for (std::vector<Strike*>::iterator it=strikes.begin(); it!=strikes.end(); ) {
     if((*it)->expired) {
       screen->circle((*it)->x, (*it)->y, (*it)->radius, blackColour);
       delete (*it);
@@ -135,6 +151,30 @@ void Game::Delete_Expired_Strikes() {
       ++it;
     }
    }
+}
+
+void Game::Delete_All_Objects() {
+  Serial.println(targets.size());
+  
+  //strikes
+  for (std::vector<Strike*>::iterator it=strikes.begin(); it!=strikes.end(); ++it) {
+    delete (*it);
+    it = strikes.erase(it);
+  }
+
+   //targets
+   for (std::vector<Target*>::iterator it=targets.begin(); it!=targets.end(); ++it) {
+    delete (*it);
+    it = targets.erase(it);
+   }
+
+  //obstacles
+   for (std::vector<Obstacle*>::iterator it=obstacles.begin(); it!=obstacles.end(); ++it) {
+      delete (*it);
+      it = obstacles.erase(it);
+   }
+
+   Serial.println(targets.size());
 }
 
 void Game::Color_Targets(const uint16_t color) {
@@ -182,9 +222,17 @@ void Game::Detect_Strike_Hits() {
 }
 
 //Initialize Airplane Life on screen
-void Game::Initialize_Life(){
-  screen->dRectangle(115,5,10,10,greenColour);
-  screen->dRectangle(95,5,10,10,redColour);
+void Game::Draw_Life(){
+  uint16_t color = blackColour;
+  for(int i = 0; i < life; i++) {
+    switch(i) {
+      case 0: color = greenColour; break;
+      case 1: color = yellowColour; break;
+      case 2: color = redColour; break;
+      default:;
+    }
+    screen->dRectangle(lifePos - 10*i, 5, 10, 10, color);
+  }
 }
 
 //Initialize Game score
@@ -193,16 +241,14 @@ void Game::Display_Score(){
   screen->gText(50, 5, String(score));
 }
 
-
-void Game::Initialize_Objects() {
-//  plane->Initialize_Parameters();
-}
-
-
 //Decrease the Life on the screen
 void Game::Decrease_Life(){
-  screen->dRectangle(plane->planeLifeX, 5, 10, 10, blackColour);
-  plane->planeLifeX -= 10;
+  screen->dRectangle(lifePos, 5, 10, 10, blackColour);
+  lifePos -= 10;
+  life--;
+  if(life == 0) {
+    //Game over
+  }
 }
 
 //Increase score on screen
@@ -227,9 +273,18 @@ void Game::Generation_Timer() {
 
 void Game::Create_New_Strike() {
   strikes.push_back(new Strike(plane->x2, plane->y2 - 5));
-  Color_Strikes(yellowColour);
+  //Color_Strikes(yellowColour);
 }
 
 void Game::Hard_Timer() {
   
 }
+
+void Game::Increment_Timer_Flag() {
+  flag_1sec++;
+}
+
+void Game::Decrease_Remaining_Time() {
+  remaining_time--;
+}
+

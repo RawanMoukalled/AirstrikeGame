@@ -86,6 +86,7 @@ class Game {
     int life;
     int lifePos;
     bool new_strike;
+    bool pause;
     level_t level;
     
     //hard timer variables

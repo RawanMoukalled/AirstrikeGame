@@ -94,6 +94,7 @@ void setup() {
 }
 
 void loop() {  
+  Serial.println("looping");
   if(display->mode == SELECTTYPE || display->mode == SELECTDIFFICULTY || display->mode == PAUSE){
     display->Read_Joystick();
     delay(200);  
@@ -104,17 +105,25 @@ void loop() {
     display->game->Increment_Object_Positions();
     display->game->Place_Objects();
     display->game->Generation_Timer();
+
+    if(display->game->pause) {
+      display->game->pause = false;
+      display->Read_Enter();
+    }
+  
   }
 }
 
 void ReadJoystickPressIntHandler() {
   if(display->mode == GAME) {
-    display->Read_Enter();
+    //display->Read_Enter();
+    display->game->pause = true;
   }
 }
 
 void ReadEnterIntHandler() {
   if(display->mode == SELECTTYPE || display->mode == SELECTDIFFICULTY || display->mode == PAUSE){
+    Serial.println("Handler");
     display->Read_Enter();
     delay(100);
   }

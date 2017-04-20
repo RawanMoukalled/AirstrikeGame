@@ -21,6 +21,7 @@ void Game::Initialize_Game() {
   lifePos = 115;
 
   new_strike = false;
+  pause = false;
   level = HARD;
 }
 
@@ -154,27 +155,19 @@ void Game::Delete_Expired_Strikes() {
 }
 
 void Game::Delete_All_Objects() {
-  Serial.println(targets.size());
-  
-  //strikes
+  //first free memory then clear the vectors  
   for (std::vector<Strike*>::iterator it=strikes.begin(); it!=strikes.end(); ++it) {
     delete (*it);
-    it = strikes.erase(it);
   }
-
-   //targets
-   for (std::vector<Target*>::iterator it=targets.begin(); it!=targets.end(); ++it) {
+  for (std::vector<Target*>::iterator it=targets.begin(); it!=targets.end(); ++it) {
     delete (*it);
-    it = targets.erase(it);
-   }
-
-  //obstacles
-   for (std::vector<Obstacle*>::iterator it=obstacles.begin(); it!=obstacles.end(); ++it) {
-      delete (*it);
-      it = obstacles.erase(it);
-   }
-
-   Serial.println(targets.size());
+  }
+  for (std::vector<Obstacle*>::iterator it=obstacles.begin(); it!=obstacles.end(); ++it) {
+    delete (*it);
+  }
+  targets.clear();
+  obstacles.clear();
+  strikes.clear();
 }
 
 void Game::Color_Targets(const uint16_t color) {

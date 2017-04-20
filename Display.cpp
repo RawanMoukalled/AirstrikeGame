@@ -180,6 +180,7 @@ void Display::Display_New_Page(uint16_t y) {
 
 // check for the push button being pressed
 void Display::Read_Enter() {
+      Serial.println("pressed");
       if(mode == SELECTTYPE || mode == SELECTDIFFICULTY || mode == GAME || mode == PAUSE){
         Display_New_Page(arrowY);
         delay(1000);

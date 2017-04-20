@@ -35,7 +35,7 @@
 // Which mode of the game we are at
 enum screen_mode_t {
   SELECTTYPE, GAME, PAUSE, LOADGAME,
-  SELECTDIFFICULTY
+  SELECTDIFFICULTY, GAMEOVER
 }; // main mode to be used 
 
 
@@ -50,6 +50,7 @@ class Display {
     void Display_New_Page(uint16_t y);
     void Read_Enter();
     void Display_Paused_Game();
+    void Display_Game_Over();
     static void Set_7Seg(int num);
 
     screen_mode_t mode;

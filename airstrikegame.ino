@@ -80,7 +80,7 @@ void setup() {
   display = new Display();
   display->screen->begin();
   display->screen->setOrientation(0);  
-  display->Initialize_Screen();  //Print first the message: "Airstrike Game"
+  //display->Initialize_Screen();  //Print first the message: "Airstrike Game"
   delay(2000);  
   display->screen->clear();   //Go to the next page
   display->Display_Select_Type();   //User can choose between a new game or to load a saved game  
@@ -105,6 +105,11 @@ void loop() {
     display->game->Increment_Object_Positions();
     display->game->Place_Objects();
     display->game->Generation_Timer();
+
+    if(display->game->gameover) {
+      display->game->gameover = false;
+      display->Display_Game_Over();
+    }
 
     if(display->game->pause) {
       display->game->pause = false;
@@ -150,11 +155,10 @@ void Timer1IntHandler(void){
     if (display->game->flag_1sec == 450){
       display->game->Decrease_Remaining_Time();
       Display::Set_7Seg(display->game->remaining_time);
-//
-//      if(display->game->remaining_time == 0) {
-//        display->mode = GAMEOVER;
-//        display->Display_New_Page(0);
-//      }
+
+      if(display->game->remaining_time == 0) {
+        display->game->gameover = true;
+      }
       
     }
   }

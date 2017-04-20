@@ -37,6 +37,7 @@ void Display::Display_Select_Type(){
   screen->gText(25, 10, "Airstrike!");
   screen->gText(15, 50, "New Game");
   screen->gText(15, 70, "Load Game");
+  
 }
 
 void Display::Place_Arrow(uint16_t x, uint16_t y){
@@ -186,11 +187,25 @@ void Display::Display_New_Page(uint16_t y) {
 
 // check for the push button being pressed
 void Display::Read_Enter() {
-      Serial.println("pressed");
-      if(mode == SELECTTYPE || mode == SELECTDIFFICULTY || mode == GAME || mode == PAUSE){
-        Display_New_Page(arrowY);
-        delay(1000);
+  if(mode == SELECTTYPE || mode == SELECTDIFFICULTY || mode == GAME || mode == PAUSE){
+    Display_New_Page(arrowY);
+    delay(1000);
   }
+}
+
+void Display::Display_Game_Over() {
+  mode = GAMEOVER; 
+  screen->setPenSolid(true);
+  screen->rectangle(10, 50, 120, 90, whiteColour);
+  screen->setFontSolid(false);
+  screen->setFontSize(2);
+  screen->gText(12, 65, "GAME OVER", blackColour);
+  game->Initialize_Game();
+  game->Delete_All_Objects();
+  Display::Set_7Seg(0);
+  delay(3000);
+  Display_Select_Type();
+  
 }
 
 void Display::Set_7Seg(int num) {

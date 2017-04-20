@@ -72,10 +72,6 @@ class Game {
 
     void Set_Level(level_t level);
     
-    //hard timer 
-    void Hard_Timer();
-    void Start_Timer_1sec();
-    
     //generation pseudo-timer handler
     void Generation_Timer();
     
@@ -89,6 +85,7 @@ class Game {
     int lifePos;
     bool new_strike;
     bool pause;
+    bool gameover;
     level_t level;
     
     //hard timer variables

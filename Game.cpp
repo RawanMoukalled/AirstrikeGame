@@ -19,6 +19,7 @@ void Game::Initialize_Game() {
 
   new_strike = false;
   pause = false;
+  gameover = false;
 }
 
 void Game::Display_Game() {
@@ -236,7 +237,7 @@ void Game::Decrease_Life(){
   lifePos -= 10;
   life--;
   if(life == 0) {
-    //Game over
+    gameover = true;
   }
 }
 
@@ -265,10 +266,6 @@ void Game::Create_New_Strike() {
   //Color_Strikes(yellowColour);
 }
 
-void Game::Hard_Timer() {
-  
-}
-
 void Game::Increment_Timer_Flag() {
   flag_1sec++;
 }
@@ -281,7 +278,7 @@ void Game::Set_Level(level_t level) {
   this->level = level;
   if(level == HARD){
     this->flag_1sec = 1;
-    this->remaining_time = 150;
+    this->remaining_time = 150; //in seconds 
   } else {
     this->flag_1sec = 1;
     this->remaining_time = 0;

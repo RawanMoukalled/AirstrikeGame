@@ -69,6 +69,8 @@ class Game {
 
     void Increment_Timer_Flag();
     void Decrease_Remaining_Time();
+
+    void Set_Level(level_t level);
     
     //hard timer 
     void Hard_Timer();

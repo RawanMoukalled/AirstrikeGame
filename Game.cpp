@@ -9,9 +9,6 @@ Game::Game(Screen_HX8353E *screen){
 }
 
 void Game::Initialize_Game() {
-  //Timer variables
-  flag_1sec = 1;
-  remaining_time = 150; //in seconds
 
   flag_random = 1;
   random_time = 20;
@@ -22,7 +19,6 @@ void Game::Initialize_Game() {
 
   new_strike = false;
   pause = false;
-  level = HARD;
 }
 
 void Game::Display_Game() {
@@ -279,5 +275,16 @@ void Game::Increment_Timer_Flag() {
 
 void Game::Decrease_Remaining_Time() {
   remaining_time--;
+}
+
+void Game::Set_Level(level_t level) {
+  this->level = level;
+  if(level == HARD){
+    this->flag_1sec = 1;
+    this->remaining_time = 150;
+  } else {
+    this->flag_1sec = 1;
+    this->remaining_time = 0;
+  }
 }
 

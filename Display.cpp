@@ -134,11 +134,15 @@ void Display::Display_New_Page(uint16_t y) {
     if(y == 50){
       right_after_display = true;
       mode = GAME;
+      game->Set_Level(EASY);
       game->Display_Game();
     } 
     //hard mode
     else if(y == 70) {
-      delay(50);
+      right_after_display = true;
+      mode = GAME;
+      game->Set_Level(HARD);
+      game->Display_Game();
     }
     //back to select type
     else if(y == 90) {
@@ -154,6 +158,7 @@ void Display::Display_New_Page(uint16_t y) {
       //future new game 
       game->Initialize_Game();
       game->Delete_All_Objects();
+      Display::Set_7Seg(0);
       Display_Select_Type();
     }
 
@@ -163,6 +168,7 @@ void Display::Display_New_Page(uint16_t y) {
       //future new game 
       game->Initialize_Game();
       game->Delete_All_Objects();
+      Display::Set_7Seg(0);
       Display_Select_Type();
     }
 

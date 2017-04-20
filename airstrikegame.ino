@@ -149,8 +149,13 @@ void Timer1IntHandler(void){
   
     if (display->game->flag_1sec == 450){
       display->game->Decrease_Remaining_Time();
-      //Serial.println(display->game->remaining_time);
       Display::Set_7Seg(display->game->remaining_time);
+//
+//      if(display->game->remaining_time == 0) {
+//        display->mode = GAMEOVER;
+//        display->Display_New_Page(0);
+//      }
+      
     }
   }
 }

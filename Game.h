@@ -42,6 +42,9 @@ class Game {
     void Initialize_Game();
     void Display_Game();
     void Load_Game(String parameters);
+    void Load_Targets(String parameters);
+    void Load_Obstacles(String parameters);
+    void Load_Strikes(String parameters);
     
     void Clear_Objects();
     void Increment_Object_Positions();

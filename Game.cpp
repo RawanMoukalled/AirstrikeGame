@@ -31,24 +31,66 @@ void Game::Load_Game(String parameters) {
   for(int i = 0; i < parameters.length(); ++i) {
     c = parameters[i];
     if(c == ';') {
+      
+      int paramnum = 0;
+      if(pcount >= 0 && paramnum <=10) {
+        int paramnum = param.toInt();  
+      }
+      
       if(pcount == 0) {
-        int x = param.toInt();
-        
-        Serial.println(x);
-
+        flag_random = paramnum;
       } 
       
       else if (pcount == 1) {
-        //int x = (int)param;
-        //Serial.println(x);
+        random_time = paramnum;
       }
 
       else if(pcount == 2) {
-        
+        score = paramnum;
       }
 
       else if(pcount == 3) {
-        
+       life = paramnum; 
+      }
+
+      else if(pcount == 4) {
+        lifePos = paramnum;
+      }
+
+      else if(pcount == 5) {
+        new_strike = paramnum;
+      }
+
+      else if(pcount == 6) {
+        pause = paramnum;
+      }
+
+      else if(pcount == 7) {
+        gameover = paramnum;
+      }
+
+      else if(pcount == 8) {
+        level = (level_t)paramnum;
+      }
+
+      else if(pcount == 9) {
+        flag_1sec = paramnum;
+      }
+
+      else if(pcount == 10) {
+        remaining_time = paramnum;
+      }
+
+      else if(pcount == 11) {
+        Load_Targets(param);
+      }
+
+      else if(pcount == 12) {
+        Load_Obstacles(param);
+      }
+
+      else if(pcount == 13) {
+        Load_Strikes(param);
       }
           
       pcount++;
@@ -58,6 +100,25 @@ void Game::Load_Game(String parameters) {
       param+=c;
     }
   }
+  
+}
+
+void Game::Load_Targets(String parameters) {
+  
+  String param = "";
+  int pcount = 0;
+  char c;
+ 
+  for(int i = 0; i < parameters.length(); ++i) {
+    
+  }
+}
+
+void Game::Load_Obstacles(String parameters) {
+  
+}
+
+void Game::Load_Strikes(String parameters) {
   
 }
 
@@ -255,12 +316,12 @@ void Game::Draw_Life(){
   uint16_t color = blackColour;
   for(int i = 0; i < life; i++) {
     switch(i) {
-      case 0: color = greenColour; break;
+      case 2: color = greenColour; break;
       case 1: color = yellowColour; break;
-      case 2: color = redColour; break;
+      case 0: color = redColour; break;
       default:;
     }
-    screen->dRectangle(lifePos - 10*i, 5, 10, 10, color);
+    screen->dRectangle(lifePos - 10*(2-i), 5, 10, 10, color);
   }
 }
 

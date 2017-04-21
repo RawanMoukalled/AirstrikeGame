@@ -36,6 +36,7 @@
 #include "driverlib/sysctl.h"
 #include "driverlib/timer.h"
 
+
 #define blueLED 37 //blue LED on joystick board
 #define greenLED 38 //green LED on joystick board 
 #define redLED 39 //red LED on joystick board 
@@ -94,8 +95,8 @@ void setup() {
 }
 
 void loop() {  
-  Serial.println("looping");
-  if(display->mode == SELECTTYPE || display->mode == SELECTDIFFICULTY || display->mode == PAUSE){
+  //Serial.println((int)analogRead(23));
+  if(display->mode == SELECTTYPE || display->mode == SELECTDIFFICULTY || display->mode == PAUSE || display->mode == LOADGAME){
     display->Read_Joystick();
     delay(200);  
   }
@@ -127,8 +128,7 @@ void ReadJoystickPressIntHandler() {
 }
 
 void ReadEnterIntHandler() {
-  if(display->mode == SELECTTYPE || display->mode == SELECTDIFFICULTY || display->mode == PAUSE){
-    Serial.println("Handler");
+  if(display->mode == SELECTTYPE || display->mode == SELECTDIFFICULTY || display->mode == PAUSE || display->mode == LOADGAME){
     display->Read_Enter();
     delay(100);
   }

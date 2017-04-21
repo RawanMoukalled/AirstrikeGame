@@ -18,6 +18,9 @@
 #include <Terminal6e.h>
 #include <Terminal8e.h>
 
+#include <string>       // std::string
+
+
 #include "Game.h"
 #include "TM1637.h"
 
@@ -50,6 +53,7 @@ class Display {
     void Display_New_Page(uint16_t y);
     void Read_Enter();
     void Display_Paused_Game();
+    void Display_Load_Game();
     void Display_Game_Over();
     static void Set_7Seg(int num);
 

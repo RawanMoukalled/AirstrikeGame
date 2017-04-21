@@ -19,11 +19,12 @@
 #include <Terminal8e.h>
 
 #include <vector>
+#include <string>
 #include "Airplane.h"
 #include "Target.h"
 #include "Obstacle.h"
 #include "Strike.h"
-//#include "Display.h"
+
 
 #include "driverlib/rom.h"
 #include "driverlib/interrupt.h"
@@ -40,6 +41,7 @@ class Game {
     Game(Screen_HX8353E *screen);
     void Initialize_Game();
     void Display_Game();
+    void Load_Game(String parameters);
     
     void Clear_Objects();
     void Increment_Object_Positions();

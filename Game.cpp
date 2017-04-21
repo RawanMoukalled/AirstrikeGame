@@ -22,6 +22,45 @@ void Game::Initialize_Game() {
   gameover = false;
 }
 
+void Game::Load_Game(String parameters) {
+
+  String param = "";
+  int pcount = 0;
+  char c;
+ 
+  for(int i = 0; i < parameters.length(); ++i) {
+    c = parameters[i];
+    if(c == ';') {
+      if(pcount == 0) {
+        int x = param.toInt();
+        
+        Serial.println(x);
+
+      } 
+      
+      else if (pcount == 1) {
+        //int x = (int)param;
+        //Serial.println(x);
+      }
+
+      else if(pcount == 2) {
+        
+      }
+
+      else if(pcount == 3) {
+        
+      }
+          
+      pcount++;
+      c = ' ';
+      param = "";
+    } else {
+      param+=c;
+    }
+  }
+  
+}
+
 void Game::Display_Game() {
   screen->clear(blackColour);
   screen->setFontSolid(false);

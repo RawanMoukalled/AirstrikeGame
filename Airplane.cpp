@@ -31,13 +31,23 @@ void Airplane::Move() {
   //update previous and current positions
   prevX = currX;
   currX = (int)analogRead(xAxisPin);
-  
-  if(currX < 1700) {
-    currX = 1700;
-  } else if(currX > 2350) {
-    currX = 2350;
+
+//  
+//  if(currX < 1700) {
+//    currX = 1700;
+//  } else if(currX > 2350) {
+//    currX = 2350;
+//  }
+//  currX = map(currX, 1700, 2350, 0, 128);
+//  Change_Points((currX-prevX));  
+
+
+  if(currX < 1250) {
+    currX = 1250;
+  } else if(currX > 1650) {
+    currX = 1650;
   }
-  currX = map(currX, 1700, 2350, 0, 128);
+  currX = map(currX, 1250, 1650, 0, 128);
   Change_Points((currX-prevX));  
   
 }

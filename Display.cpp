@@ -47,7 +47,7 @@ void Display::Place_Arrow(uint16_t x, uint16_t y){
       maxY = 70;
     } 
 
-    else if (mode == SELECTDIFFICULTY || mode == PAUSE) {
+    else if (mode == SELECTDIFFICULTY || mode == PAUSE || mode == LOADGAME) {
       minY = 50;
       maxY = 90;
     }
@@ -115,6 +115,33 @@ void Display::Display_Paused_Game() {
   screen->gText(15, 90, "Back");
 }
 
+void Display::Display_Load_Game() {
+  mode = LOADGAME;
+  screen->clear(blackColour);
+  screen->setFontSolid(false);
+  screen->setFontSize(1);
+  screen->gText(25, 10, "Load Game");
+  arrowX = 3;
+  arrowY = 50;
+  screen->gText(arrowX, arrowY, ">");
+  
+  screen->gText(15, 50, "1)");
+  screen->gText(15, 70, "2)");
+  screen->gText(15, 90, "3)");
+
+  for(int i = 0; i < 5; i++) {
+    
+    if( i == 0) {
+      screen->gText(30, 50, "Game 1");
+    } else if (i == 1) {
+      screen->gText(30, 70, "Game 2");
+    } else if (i == 2) {
+      screen->gText(30, 90, "Game 3");
+    }
+  }
+  
+}
+
 //Displays new page according to the position of the arrow 
 //which means, which menu item position was selected
 void Display::Display_New_Page(uint16_t y) {
@@ -126,7 +153,7 @@ void Display::Display_New_Page(uint16_t y) {
     }
     //load game
     else if(y == 70) {
-      //Display_Load_Game();
+      Display_Load_Game();
     }
   } 
   
@@ -183,11 +210,34 @@ void Display::Display_New_Page(uint16_t y) {
   else if(mode == GAME) {
     Display_Paused_Game();
   }
+
+  else if(mode == LOADGAME) {
+    
+    //Query Game 1
+    if( y == 50) {
+      
+    } 
+
+    //Query Game 2
+    else if ( y == 70) {
+      
+    }
+    
+    //Query Game 3
+    else if (y == 90) {
+      
+    }
+
+    game->Load_Game("34;78;");
+    //mode = GAME;
+    //game->Display_Game();
+  }
 }
 
 // check for the push button being pressed
 void Display::Read_Enter() {
-  if(mode == SELECTTYPE || mode == SELECTDIFFICULTY || mode == GAME || mode == PAUSE){
+  //display mode 
+  if(mode == SELECTTYPE || mode == SELECTDIFFICULTY || mode == GAME || mode == PAUSE || mode == LOADGAME){
     Display_New_Page(arrowY);
     delay(1000);
   }

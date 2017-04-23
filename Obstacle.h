@@ -14,8 +14,8 @@
 class Obstacle {
   public: 
     Obstacle();
-    Obstacle(int x, int y, int len);
-    void Initialize_Parameters(int x, int y, int len);
+    Obstacle(int x, int y);
+    void Initialize_Parameters(int x, int y);
     void Move(Airplane *plane);
     bool On_Border();
     void Detect_Collision(Airplane *plane);

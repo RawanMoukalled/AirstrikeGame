@@ -33,8 +33,8 @@ void Game::Load_Game(String parameters) {
     if(c == ';') {
       
       int paramnum = 0;
-      if(pcount >= 0 && paramnum <=10) {
-        int paramnum = param.toInt();  
+      if((pcount >= 0 && paramnum <=10) || pcount == 14) {
+        paramnum = param.toInt();  
       }
       
       if(pcount == 0) {
@@ -70,15 +70,15 @@ void Game::Load_Game(String parameters) {
       }
 
       else if(pcount == 8) {
-        level = (level_t)paramnum;
-      }
-
-      else if(pcount == 9) {
         flag_1sec = paramnum;
       }
 
-      else if(pcount == 10) {
+      else if(pcount == 9) {
         remaining_time = paramnum;
+      }
+
+      else if(pcount == 10) {
+        level = (level_t)paramnum;
       }
 
       else if(pcount == 11) {
@@ -92,11 +92,18 @@ void Game::Load_Game(String parameters) {
       else if(pcount == 13) {
         Load_Strikes(param);
       }
+
+      else if(pcount == 14) {
+        plane->Load_Parameters(paramnum);
+      }
           
       pcount++;
       c = ' ';
       param = "";
-    } else {
+      
+    } 
+    
+    else {
       param+=c;
     }
   }
@@ -108,18 +115,75 @@ void Game::Load_Targets(String parameters) {
   String param = "";
   int pcount = 0;
   char c;
- 
+  std::vector<int> positions;
+  
   for(int i = 0; i < parameters.length(); ++i) {
-    
+    c = parameters[i];
+    if(c == ',') {
+      positions.push_back(param.toInt());
+
+      c = ' ';
+      param = "";
+    } 
+
+    else {
+      param += c;
+    }    
+  }
+
+  for(std::vector<int>::iterator it = positions.begin(); it != positions.end(); it = it + 2) {
+    targets.push_back(new Target((*it), (*(it+1))));
   }
 }
 
 void Game::Load_Obstacles(String parameters) {
+    String param = "";
+  int pcount = 0;
+  char c;
+  std::vector<int> positions;
   
+  for(int i = 0; i < parameters.length(); ++i) {
+    c = parameters[i];
+    if(c == ',') {
+      positions.push_back(param.toInt());
+
+      c = ' ';
+      param = "";
+    } 
+
+    else {
+      param += c;
+    }    
+  }
+
+  for(std::vector<int>::iterator it = positions.begin(); it != positions.end(); it = it + 2) {
+    obstacles.push_back(new Obstacle((*it), (*(it+1))));
+  }
 }
 
 void Game::Load_Strikes(String parameters) {
+  String param = "";
+  int pcount = 0;
+  char c;
+  std::vector<int> positions;
   
+  for(int i = 0; i < parameters.length(); ++i) {
+    c = parameters[i];
+    if(c == ',') {
+      positions.push_back(param.toInt());
+
+      c = ' ';
+      param = "";
+    } 
+
+    else {
+      param += c;
+    }    
+  }
+
+  for(std::vector<int>::iterator it = positions.begin(); it != positions.end(); it = it + 2) {
+    strikes.push_back(new Strike((*it), (*(it+1))));
+  }
 }
 
 void Game::Display_Game() {
@@ -321,7 +385,7 @@ void Game::Draw_Life(){
       case 0: color = redColour; break;
       default:;
     }
-    screen->dRectangle(lifePos - 10*(2-i), 5, 10, 10, color);
+    screen->dRectangle(115 - 10*(2-i), 5, 10, 10, color);
   }
 }
 

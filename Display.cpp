@@ -228,7 +228,7 @@ void Display::Display_New_Page(uint16_t y) {
       
     }
 
-    game->Load_Game("12;19;20;2;115;0;0;0;0;1;3;100");
+    game->Load_Game("12;19;20;2;105;0;0;0;3;100;1;98,50,34,60,;80,80,;95,50,;20;");
     mode = GAME;
     game->Display_Game();
   }

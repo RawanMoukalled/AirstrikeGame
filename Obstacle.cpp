@@ -1,17 +1,17 @@
 #include "Obstacle.h"
 
 Obstacle::Obstacle() {
-  Initialize_Parameters(random(10, 118), 20 , 11);
+  Initialize_Parameters(random(10, 118), 20);
 }
 
-Obstacle::Obstacle(int x, int y, int len) {
-  Initialize_Parameters(x, y, len);
+Obstacle::Obstacle(int x, int y) {
+  Initialize_Parameters(x, y);
 }
 
-void Obstacle::Initialize_Parameters(int x, int y, int len) {
+void Obstacle::Initialize_Parameters(int x, int y) {
   this->x1 = x;
   this->y1 = y; 
-  this->len = len;
+  this->len = 11;
   this->x2 = x + len;
   this->y2 = y + len;
   collided = false;

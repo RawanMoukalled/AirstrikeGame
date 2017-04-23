@@ -149,7 +149,13 @@ void ReadEnterIntHandler() {
 void Timer1IntHandler(void){
   //Required to launch next interrupt
   ROM_TimerIntClear(TIMER1_BASE, TIMER_A);
+
+  if(display->game->level == HARD) {
+    //Serial.println("HARD");
+  }
+
   if(display->mode == GAME && display->game->level == HARD) {
+    
     display->game->Increment_Timer_Flag();
   
     if (display->game->flag_1sec == 450){

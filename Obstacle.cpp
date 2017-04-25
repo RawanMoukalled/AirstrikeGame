@@ -18,8 +18,8 @@ void Obstacle::Initialize_Parameters(int x, int y) {
 }
 
 void Obstacle::Move(Airplane *plane) {
-  y1+=10;
-  y2+=10;
+  y1+=7;
+  y2+=7;
   if(!collided && (y2 >= (plane->y2))) {
     Detect_Collision(plane); 
   }

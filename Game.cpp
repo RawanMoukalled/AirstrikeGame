@@ -9,7 +9,6 @@ Game::Game(Screen_HX8353E *screen){
 }
 
 void Game::Initialize_Game() {
-
   flag_random = 1;
   random_time = 20;
 
@@ -25,7 +24,7 @@ void Game::Initialize_Game() {
 void Game::Load_Game(String parameters) {
 
   String param = "";
-  int pcount = 0;
+  int pcount = -1;
   char c;
  
   for(int i = 0; i < parameters.length(); ++i) {
@@ -202,7 +201,6 @@ void Game::Display_Game() {
 void Game::Clear_Objects() {
   screen->setPenSolid(true);
 
-  //clear plane
   Color_Plane(blackColour);
   Color_Targets(blackColour);
   Color_Strikes(blackColour);
@@ -227,7 +225,6 @@ void Game::Increment_Object_Positions() {
   for(std::vector<Obstacle*>::iterator it = obstacles.begin(); it != obstacles.end(); ++it) {
     (*it)->Move(plane);
   }
-
   Delete_Outlier_Targets();
   Delete_Outlier_Strikes();
   Delete_Outlier_Obstacles();
@@ -251,9 +248,9 @@ void Game::Place_Objects() {
     new_strike = false;
   } 
   
-  Color_Targets(whiteColour);
+  Color_Targets(cyanColour);
   Color_Strikes(yellowColour);
-  Color_Obstacles(whiteColour);
+  Color_Obstacles(orangeColour);
   delay(100);
 }
 
@@ -297,6 +294,9 @@ void Game::Delete_Struck_Targets() {
       it = targets.erase(it);
       score += 10;
       Display_Score(); 
+      if(score % 100 == 0) {
+        remaining_time +=6;
+      }
     } else { 
       ++it;
     }

@@ -31,6 +31,9 @@
 #include "driverlib/sysctl.h"
 #include "driverlib/timer.h"
 
+#define greenLED 38 //green LED on joystick board 
+#define redLED 39 //red LED on joystick board 
+
 // Which mode of the game we are at
 enum level_t {
   EASY, HARD, NONE

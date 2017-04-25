@@ -228,7 +228,7 @@ void Display::Display_New_Page(uint16_t y) {
       
     }
 
-    game->Load_Game("12;19;20;2;105;0;0;0;3;100;1;98,50,34,60,;80,80,;95,50,;20;");
+    game->Load_Game("1;12;19;20;2;105;0;0;0;3;100;1;98,50,34,60,;80,80,;95,50,;20;");
     mode = GAME;
     game->Display_Game();
   }
@@ -238,8 +238,10 @@ void Display::Display_New_Page(uint16_t y) {
 void Display::Read_Enter() {
   //display mode 
   if(mode == SELECTTYPE || mode == SELECTDIFFICULTY || mode == GAME || mode == PAUSE || mode == LOADGAME){
-    Display_New_Page(arrowY);
     delay(1000);
+    Serial.println("pressed");
+    Display_New_Page(arrowY);
+    
   }
 }
 
@@ -250,6 +252,7 @@ void Display::Display_Game_Over() {
   screen->setFontSolid(false);
   screen->setFontSize(2);
   screen->gText(12, 65, "GAME OVER", blackColour);
+  
   game->Initialize_Game();
   game->Delete_All_Objects();
   Display::Set_7Seg(0);

@@ -19,8 +19,7 @@ void Target::Initialize_Parameters(int x, int y) {
 }
 
 void Target::Move() {
-  y += 10; 
-
+  y += 7; 
 }
 
 bool Target::On_Border(Airplane *plane) {

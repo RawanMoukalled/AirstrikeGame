@@ -69,19 +69,17 @@ void setup() {
   pinMode(blueLED, OUTPUT);
   pinMode(greenLED, OUTPUT);
   pinMode(redLED, OUTPUT);
-  digitalWrite(blueLED, LOW);
-  digitalWrite(greenLED, LOW);
-  digitalWrite(redLED, LOW);
+
 
   pinMode(BUZZER_PIN, OUTPUT);  
-  //digitalWrite(BUZZER_PIN, HIGH);
-  //delay(200);
-  //digitalWrite(BUZZER_PIN, LOW);
+  digitalWrite(BUZZER_PIN, HIGH);
+  delay(200);
+  digitalWrite(BUZZER_PIN, LOW);
       
   display = new Display();
   display->screen->begin();
   display->screen->setOrientation(0);  
-  //display->Initialize_Screen();  //Print first the message: "Airstrike Game"
+  display->Initialize_Screen();  //Print first the message: "Airstrike Game"
   delay(2000);  
   display->screen->clear();   //Go to the next page
   display->Display_Select_Type();   //User can choose between a new game or to load a saved game  
@@ -92,6 +90,10 @@ void setup() {
   attachInterrupt(JoystickPress, ReadJoystickPressIntHandler, FALLING);
 
   Timer_1sec(50000);
+
+    digitalWrite(blueLED, LOW);
+  digitalWrite(greenLED, LOW);
+  digitalWrite(redLED, LOW);
 }
 
 void loop() {  
